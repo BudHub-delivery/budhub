@@ -1,0 +1,26 @@
+{
+  "name": "budhub",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server/server.ts",
+  "scripts": {
+    "start": "node server/server.ts",
+    "develop": "concurrently --kill-others \"cd server && npm run watch\" \"cd client && npm start\"",
+    "install": "cd server && npm i && cd ../client && npm i",
+    "seed": "cd server && npm run seed",
+    "build": "cd client && npm run build"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
+    "@types/nodemailer": "^6.4.7",
+    "concurrently": "^5.3.0"
+  },
+  "dependencies": {
+    "@types/jsonwebtoken": "^9.0.2",
+    "force-ssl-heroku": "^1.0.2",
+    "mongodb": "^5.4.0",
+    "nodemailer": "^6.9.1"
+  }
+}
