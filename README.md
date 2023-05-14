@@ -3,7 +3,7 @@
   [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
   ## Description
-  This application allows you to Create an account, then allows your to create and manager Remindrs to send you emailed notifications for specific events you would like to be reminded about.
+  This application is intended to be used to Order Cannabis from Dispencaries.
 
   ## Table of Contents 
   - [Installation](#installation)
