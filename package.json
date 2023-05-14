@@ -1,0 +1,20 @@
+{
+  "name": "budhub",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server/server.ts",
+  "scripts": {
+    "start": "ts-node server/server.ts",
+    "develop": "concurrently \"cd server && npm run watch\" \"cd client && npm start\"",
+    "db_setup": "cd server && npm run merge-schemas && npm run deploy",
+    "install": "cd server && npm i && cd ../client && npm i",
+    "build": "cd client && npm run build"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^5.3.0"
+  },
+  "dependencies": {
+  }
+}
