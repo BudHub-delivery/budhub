@@ -1,7 +1,7 @@
-import fs from 'fs';
-import path from 'path';
+import * as fs from 'fs';
+import * as path from 'path';
 
-const schemasPath = path.resolve(__dirname, 'schemas');
+const schemasPath = path.resolve(__dirname, 'prisma', 'schemas');
 const schemaFiles = fs.readdirSync(schemasPath);
 
 const datasource = `

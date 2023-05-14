@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "merge-schemas": "tsc merge-schemas.ts && node moerge-schemas.js"
+    "merge-schemas": "npx tsc merge-schemas && node merge-schemas.js"
   },
   "keywords": [],
   "author": "",
@@ -14,5 +14,8 @@
     "@types/node": "^20.1.4",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
+  },
+  "dependencies": {
+    "tsc": "^2.0.4"
   }
 }
