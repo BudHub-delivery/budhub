@@ -1,5 +1,5 @@
-const path = require('path')
-const express = require('express')
+import path from 'path'
+import express, {Request, Response} from 'express'
 
 const app = express()
 
