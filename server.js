@@ -1,5 +1,5 @@
-import express, {Request, Response} from 'express'
 const path = require('path')
+const express = require('express')
 
 const app = express()
 
@@ -9,13 +9,7 @@ app.listen(PORT, () => console.log('Server started'))
 
 app.use(express.static("client/dist"))
 
-type TestData = {
-    firstName: string,
-    lastName: string,
-    email: string
-}[];
-
-const testData : TestData = [
+const testData = [
     {
         firstName: "Dan",
         lastName: "Rathers",
@@ -28,10 +22,10 @@ const testData : TestData = [
     }
 ]
 
-app.get("/api/test", (req : Request, res : Response) => {
-    res.json(testData);
+app.get("/api/test", (req, res) => {
+    res.send(testData);
 })
 
-app.get("*", (req : Request, res : Response) => {
+app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "client/dist", "index.html"))
 })
