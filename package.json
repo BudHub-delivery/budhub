@@ -1,7 +1,7 @@
 {
     "scripts": {
-        "start" : "node server.ts",
-        "dev" : "nodemon server.ts"
+        "start" : "node server",
+        "dev" : "nodemon server"
     },
     "license": "ISC",
     "devDependencies": {
