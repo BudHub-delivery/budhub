@@ -1,0 +1,7 @@
+model Store_Tax {
+  id       Int    @id @default(autoincrement())
+  store_id Int    @unique
+  store    Store  @relation(fields: [store_id], references: [id])
+  tax_rate Float
+  orders   Order[]
+}

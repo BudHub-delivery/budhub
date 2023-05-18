@@ -1,0 +1,26 @@
+model Order{
+  id                Int               @id @default(autoincrement())
+  user_id           Int
+  user              User              @relation(fields: [user_id], references: [id])
+  store_id          Int
+  store             Store             @relation(fields: [store_id], references: [id])
+  address_id        Int
+  address           Address           @relation(fields: [address_id], references: [id])
+  delivery_drive_id Int
+  delivery_driver   Delivery_Driver   @relation(fields: [delivery_drive_id], references: [id])
+  payment_method_id Int
+  payment_method    Payment_Method    @relation(fields: [payment_method_id], references: [id])
+  payment_status_id Int
+  payment_status    Payment_Status    @relation(fields: [payment_status_id], references: [id])
+  store_tax_id      Int
+  store_tax         Store_Tax         @relation(fields: [store_tax_id], references: [id])
+  delivery_fee      Float 
+  delivery_tip      Float 
+  requested_time    DateTime  
+  created_at        DateTime          @default(now())
+  updated_at        DateTime          @updatedAt
+  order_total       Float
+  deliveries        Delivery[]
+  message_threads   Message_Thread[]
+  order_items       Order_Item[]
+}
