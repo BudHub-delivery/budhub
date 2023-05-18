@@ -1,0 +1,15 @@
+model Message {
+  id                      Int                 @id @default(autoincrement())
+  message_thread_id       Int
+  message_thread          Message_Thread      @relation(fields: [message_thread_id], references: [id])
+  author_id               Int
+  author                  User                @relation("AuthorRelation", fields: [author_id], references: [id])
+  recipient_id            Int 
+  recipient               User                @relation("RecipientRelation", fields: [recipient_id], references: [id])
+  message_body            String    
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              DateTime?
+  message_read_status_id  Int
+  message_read_status     Message_Read_Status @relation(fields: [message_read_status_id], references: [id])
+}

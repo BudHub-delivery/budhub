@@ -1,0 +1,18 @@
+model Address {
+  id                  Int        @id @default(autoincrement())
+  address_line_1      String?
+  address_line_2      String
+  delivery_notes      String?
+  city                String
+  state               String
+  zip                 String
+  country             String
+  user_id             Int
+  user                User       @relation(fields: [user_id], references: [id])
+  created_at          DateTime   @default(now())
+  updated_at          DateTime   @updatedAt
+  billing_addresses   Billing_Address[]
+  delivery_addresses  Delivery_Address[]
+  orders              Order[]
+  stores              Store[]
+}
