@@ -1,6 +1,6 @@
 {
     "scripts": {
-        "start" : "node server",
+        "start" : "cd client && npm install && npm run build && cd .. && node server",
         "dev" : "nodemon server"
     },
     "license": "ISC",
