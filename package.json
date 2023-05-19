@@ -4,7 +4,7 @@
     "description": "",
     "main": "index.js",
      "scripts": {
-        "start" : "cd client && npm run build && cd ../ && ts-node server.ts",
+        "start" : "npm i && cd client && npm run build && cd ../ && ts-node server.ts",
         "dev" : "nodemon server.ts",
         "merge-schemas": "npx tsc merge-schemas && node merge-schemas.js",
         "deploy": "npx prisma generate && npx prisma migrate deploy"
