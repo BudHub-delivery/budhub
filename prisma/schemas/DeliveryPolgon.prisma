@@ -1,0 +1,6 @@
+model DeliveryPolygon {
+  id              Int           @id @default(autoincrement())
+  storeId         Int
+  store           Store         @relation(fields: [storeId], references: [id])
+  polygonJson     String
+}

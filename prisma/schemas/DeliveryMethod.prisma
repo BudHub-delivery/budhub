@@ -1,0 +1,11 @@
+model DeliveryMethod {
+  id              Int                   @id @default(autoincrement())
+  method          DeliveryMethodType     
+  deliveries      Delivery[]
+  orders          Order[]
+}
+
+enum DeliveryMethodType {
+  PICKUP
+  DELIVERY
+}

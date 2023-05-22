@@ -1,5 +1,5 @@
-model Message_Read_Status{
+model MessageReadStatus {
   id                  Int            @id @default(autoincrement())
-  message_read_status String
+  messageReadStatus   String
   messages            Message[]
 }

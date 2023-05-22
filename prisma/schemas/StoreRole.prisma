@@ -1,0 +1,9 @@
+model StoreRole {
+  id              Int         @id @default(autoincrement())
+  userId          Int
+  user            User        @relation(fields: [userId], references: [id])
+  storeId         Int
+  store           Store       @relation(fields: [storeId], references: [id])
+  roleId          Int
+  role            Role        @relation(fields: [roleId], references: [id])
+}

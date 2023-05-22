@@ -1,18 +1,20 @@
 model Address {
-  id                  Int        @id @default(autoincrement())
-  address_line_1      String?
-  address_line_2      String
-  delivery_notes      String?
+  id                  Int                  @id @default(autoincrement())
+  addressLine1        String?
+  addressLine2        String
+  deliveryNotes       String?
   city                String
   state               String
   zip                 String
-  country             String
-  user_id             Int
-  user                User       @relation(fields: [user_id], references: [id])
-  created_at          DateTime   @default(now())
-  updated_at          DateTime   @updatedAt
-  billing_addresses   Billing_Address[]
-  delivery_addresses  Delivery_Address[]
+  userId              Int?
+  user                User?                @relation(fields: [userId], references: [id])
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  latitude            Float?               // Created using GoogleAPI Call during address creation   
+  longitude           Float?               // Created using GoogleAPI Call during address creation   
+  billingAddresses    BillingAddress[]
+  deliveryAddresses   DeliveryAddress[]
   orders              Order[]
-  stores              Store[]
+  store               Store?
+  company             Company?
 }

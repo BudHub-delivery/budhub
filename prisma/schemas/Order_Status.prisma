@@ -1,4 +1,0 @@
-model Order_Status{
-  id              Int            @id @default(autoincrement())
-  order_status    String         @unique
-}

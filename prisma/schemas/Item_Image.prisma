@@ -1,6 +1,0 @@
-model Item_Image{
-  id              Int            @id @default(autoincrement())
-  item_id         Int
-  item            Item           @relation(fields: [item_id], references: [id])
-  s3_url          String
-}

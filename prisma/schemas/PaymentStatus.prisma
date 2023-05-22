@@ -1,0 +1,12 @@
+model PaymentStatus {
+  id              Int                 @id @default(autoincrement())
+  paymentStatus   PaymentStatusType 
+  orders          Order[]
+}
+
+enum PaymentStatusType {
+  SUCCESS
+  PENDING
+  DECLINED
+  REFUNDED
+}

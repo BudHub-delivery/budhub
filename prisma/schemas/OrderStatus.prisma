@@ -1,0 +1,15 @@
+model OrderStatus {
+  id              Int                 @id @default(autoincrement())
+  orderStatus     OrderStatusEnum
+  orders          Order[]         
+}
+
+enum OrderStatusEnum {
+  PENDING
+  ACCEPTED
+  CANCELLED
+  OUT_FOR_DELIVERY
+  DELIVERED
+  READY_FOR_PICKUP
+  PICKED_UP
+}

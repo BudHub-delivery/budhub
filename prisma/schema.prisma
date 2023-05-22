@@ -10,237 +10,359 @@ generator client {
 
 
 model Address {
-  id                  Int        @id @default(autoincrement())
-  address_line_1      String?
-  address_line_2      String
-  delivery_notes      String?
+  id                  Int                  @id @default(autoincrement())
+  addressLine1        String?
+  addressLine2        String
+  deliveryNotes       String?
   city                String
   state               String
   zip                 String
-  country             String
-  user_id             Int
-  user                User       @relation(fields: [user_id], references: [id])
-  created_at          DateTime   @default(now())
-  updated_at          DateTime   @updatedAt
-  billing_addresses   Billing_Address[]
-  delivery_addresses  Delivery_Address[]
+  userId              Int?
+  user                User?                @relation(fields: [userId], references: [id])
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  latitude            Float?               // Created using GoogleAPI Call during address creation   
+  longitude           Float?               // Created using GoogleAPI Call during address creation   
+  billingAddresses    BillingAddress[]
+  deliveryAddresses   DeliveryAddress[]
   orders              Order[]
-  stores              Store[]
+  store               Store?
+  company             Company?
 }
 
-model Billing_Address{
+model BillingAddress {
   id                  Int             @id @default(autoincrement())
-  user_id             Int
-  user                User            @relation(fields: [user_id], references: [id])
-  address_id          Int
-  address             Address         @relation(fields: [address_id], references: [id])
-  payment_method_id   Int
-  payment_method      Payment_Method  @relation(fields: [payment_method_id], references: [id])
+  userId              Int
+  user                User            @relation(fields: [userId], references: [id])
+  addressId           Int
+  address             Address         @relation(fields: [addressId], references: [id])
+  paymentMethodId     Int
+  paymentMethod       PaymentMethod   @relation(fields: [paymentMethodId], references: [id])
 }
 
-model Delivery{
+model Company {
+  id              Int           @id @default(autoincrement())
+  name            String    
+  description     String?   
+  addressId       Int           @unique
+  address         Address       @relation(fields: [addressId], references: [id])
+  stores          Store[]   
+  isActive        Boolean       @default(true)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  isDeleted       Boolean       @default(false)
+}
+
+model Delivery {
   id                  Int               @id @default(autoincrement())
-  order_id            Int
-  order               Order             @relation(fields: [order_id], references: [id])
-  delivery_drive_id   Int
-  delivery_drive      Delivery_Driver    @relation(fields: [delivery_drive_id], references: [id])
-  delivery_method_id  Int
-  delivery_method     Delivery_Method   @relation(fields: [delivery_method_id], references: [id])
-  delivery_status_id  Int
-  delivery_status     Delivery_Status   @relation(fields: [delivery_status_id], references: [id])
+  orderId             Int               @unique
+  order               Order             @relation(fields: [orderId], references: [id])
+  deliveryDriverId    Int
+  deliveryDriver      DeliveryDriver    @relation(fields: [deliveryDriverId], references: [id])
+  deliveryMethodId    Int
+  deliveryMethod      DeliveryMethod    @relation(fields: [deliveryMethodId], references: [id])
+  deliveryStatusId    Int
+  deliveryStatus      DeliveryStatus    @relation(fields: [deliveryStatusId], references: [id])
 }
 
-model Delivery_Address{
+model DeliveryAddress {
   id              Int      @id @default(autoincrement())
-  user_id         Int
-  user            User     @relation(fields: [user_id], references: [id])
-  address_id      Int
-  address         Address  @relation(fields: [address_id], references: [id])
+  userId          Int
+  user            User     @relation(fields: [userId], references: [id])
+  addressId       Int
+  address         Address  @relation(fields: [addressId], references: [id])
 }
 
-model Delivery_Driver{
+model DeliveryDriver {
   id              Int   @id @default(autoincrement())
-  user_id         Int   @unique
-  user            User  @relation(fields: [user_id], references: [id])
+  userId          Int   @unique
+  user            User  @relation(fields: [userId], references: [id])
   deliveries      Delivery[]
   orders          Order[]
 }
 
-model Delivery_Method {
-  id              Int         @id @default(autoincrement())
-  method          String     
+model DeliveryMethod {
+  id              Int                   @id @default(autoincrement())
+  method          DeliveryMethodType     
   deliveries      Delivery[]
+  orders          Order[]
 }
 
-model Delivery_Status{
-  id          Int            @id @default(autoincrement())
-  status      String
+enum DeliveryMethodType {
+  PICKUP
+  DELIVERY
+}
+
+model DeliveryPolygon {
+  id              Int           @id @default(autoincrement())
+  storeId         Int
+  store           Store         @relation(fields: [storeId], references: [id])
+  polygonJson     String
+}
+
+model DeliveryStatus {
+  id          Int                   @id @default(autoincrement())
+  status      DeliveryStatusEnum
   deliveries  Delivery[]
 }
 
-model Item{
-  id             Int            @id @default(autoincrement())
-  store_id       Int
-  store          Store          @relation(fields: [store_id], references: [id])
-  item_name      String
-  item_price     Float
-  item_desc      String?
-  images         Item_Image[]
-  order_items    Order_Item[]
+enum DeliveryStatusEnum {
+  DELIVERED
+  IN_TRANSIT
+  PENDING
+  CANCELLED
+  PICKED_UP
+  READY_FOR_PICKUP
 }
 
-model Item_Image{
+model Item{
+  id                  Int                   @id @default(autoincrement())
+  storeId             Int       
+  store               Store                 @relation(fields: [storeId], references: [id])
+  itemName            String
+  itemDesc            String?
+  brandName           String?
+  type                ItemType
+  strainType          StrainType
+  containsThc         Boolean
+  containsCbd         Boolean
+  cbdContent          Float?
+  thcContent          Float?
+  ItemWeightPrice     ItemWeightPrice[]     // TODO: change to lowercase itemWeightPrice  
+  images              ItemImage[]
+  orderItems          OrderItem[]
+}
+
+enum ItemType {
+  Packaged_Flower
+  Bulk_Flower
+  Edible
+  Concentrate
+  Cartragidge
+  Vaporizer
+  Topical
+  Preroll
+  Accessory
+  Other
+}
+
+enum StrainType {
+  Indica
+  Sativa
+  Hybrid
+  CBD
+  Other
+}
+
+
+model ItemImage{
   id              Int            @id @default(autoincrement())
-  item_id         Int
-  item            Item           @relation(fields: [item_id], references: [id])
-  s3_url          String
+  itemId          Int
+  item            Item           @relation(fields: [itemId], references: [id])
+  s3Url           String
+}
+
+model ItemWeightPrice {
+  id              Int            @id @default(autoincrement())
+  itemId          Int
+  item            Item           @relation(fields: [itemId], references: [id])
+  weight          ItemWeight
+  price           Float
+}
+
+enum ItemWeight {
+  Preroll
+  Gram
+  Eighth
+  Quarter
+  HalfOunce
+  Ounce
+  Pound
+  Package
 }
 
 model Message {
   id                      Int                 @id @default(autoincrement())
-  message_thread_id       Int
-  message_thread          Message_Thread      @relation(fields: [message_thread_id], references: [id])
-  author_id               Int
-  author                  User                @relation("AuthorRelation", fields: [author_id], references: [id])
-  recipient_id            Int 
-  recipient               User                @relation("RecipientRelation", fields: [recipient_id], references: [id])
-  message_body            String    
-  created_at              DateTime            @default(now())
-  updated_at              DateTime            @updatedAt
-  deleted_at              DateTime?
-  message_read_status_id  Int
-  message_read_status     Message_Read_Status @relation(fields: [message_read_status_id], references: [id])
+  messageThreadId         Int
+  messageThread           MessageThread       @relation(fields: [messageThreadId], references: [id])
+  authorId                Int
+  author                  User                @relation("AuthorRelation", fields: [authorId], references: [id])
+  recipientId             Int 
+  recipient               User                @relation("RecipientRelation", fields: [recipientId], references: [id])
+  messageBody             String    
+  createdAt               DateTime            @default(now())
+  updatedAt               DateTime            @updatedAt
+  deletedAt               DateTime?
+  messageReadStatusId     Int
+  messageReadStatus       MessageReadStatus   @relation(fields: [messageReadStatusId], references: [id])
 }
 
-model Message_Read_Status{
+model MessageReadStatus {
   id                  Int            @id @default(autoincrement())
-  message_read_status String
+  messageReadStatus   String
   messages            Message[]
 }
 
-model Message_Thread{
+model MessageThread {
   id              Int            @id @default(autoincrement())
-  order_id        Int
-  order           Order          @relation(fields: [order_id], references: [id])
-  author_id       Int
-  author          User           @relation(fields: [author_id], references: [id])
+  orderId         Int
+  order           Order          @relation(fields: [orderId], references: [id])
+  authorId        Int
+  author          User           @relation(fields: [authorId], references: [id])
   messages        Message[]
 }
 
-model Order{
-  id                Int               @id @default(autoincrement())
-  user_id           Int
-  user              User              @relation(fields: [user_id], references: [id])
-  store_id          Int
-  store             Store             @relation(fields: [store_id], references: [id])
-  address_id        Int
-  address           Address           @relation(fields: [address_id], references: [id])
-  delivery_drive_id Int
-  delivery_driver   Delivery_Driver   @relation(fields: [delivery_drive_id], references: [id])
-  payment_method_id Int
-  payment_method    Payment_Method    @relation(fields: [payment_method_id], references: [id])
-  payment_status_id Int
-  payment_status    Payment_Status    @relation(fields: [payment_status_id], references: [id])
-  store_tax_id      Int
-  store_tax         Store_Tax         @relation(fields: [store_tax_id], references: [id])
-  delivery_fee      Float 
-  delivery_tip      Float 
-  requested_time    DateTime  
-  created_at        DateTime          @default(now())
-  updated_at        DateTime          @updatedAt
-  order_total       Float
-  deliveries        Delivery[]
-  message_threads   Message_Thread[]
-  order_items       Order_Item[]
+model Order {
+  id                      Int               @id @default(autoincrement())
+  userId                  Int
+  user                    User              @relation(fields: [userId], references: [id])
+  storeId                 Int
+  store                   Store             @relation(fields: [storeId], references: [id])
+  addressId               Int
+  address                 Address           @relation(fields: [addressId], references: [id])
+  orderStatusId           Int
+  orderStatus             OrderStatus       @relation(fields: [orderStatusId], references: [id])
+  paymentMethodId         Int
+  paymentMethod           PaymentMethod     @relation(fields: [paymentMethodId], references: [id])
+  paymentStatusId         Int
+  paymentStatus           PaymentStatus     @relation(fields: [paymentStatusId], references: [id])
+  deliveryDriverId        Int?
+  deliveryDriver          DeliveryDriver?   @relation(fields: [deliveryDriverId], references: [id])         
+  storeTaxId              Int
+  storeTax                StoreTax          @relation(fields: [storeTaxId], references: [id])
+  deliveryMethodId        Int
+  deliveryMethod          DeliveryMethod    @relation(fields: [deliveryMethodId], references: [id])
+  deliveryFee             Float 
+  deliveryTip             Float 
+  requestedTime           DateTime  
+  createdAt               DateTime          @default(now())
+  updatedAt               DateTime          @updatedAt
+  orderTotal              Float
+  delivery                Delivery?
+  messageThreads          MessageThread[]
+  orderItems              OrderItem[]
 }
 
-model Order_Item{
-  id              Int            @id @default(autoincrement())
-  order_id        Int
-  order           Order          @relation(fields: [order_id], references: [id])
-  item_id         Int
-  item            Item           @relation(fields: [item_id], references: [id])
-  item_quantity   Int
+model OrderItem {
+  id            Int          @id @default(autoincrement())
+  itemId        Int
+  item          Item         @relation(fields: [itemId], references: [id])
+  orderId       Int
+  order         Order        @relation(fields: [orderId], references: [id])
+  itemQuantity  Int
+  itemWeight    ItemWeight
+  itemPrice     Float
 }
 
-model Order_Status{
-  id              Int            @id @default(autoincrement())
-  order_status    String         @unique
+model OrderStatus {
+  id              Int                 @id @default(autoincrement())
+  orderStatus     OrderStatusEnum
+  orders          Order[]         
 }
 
-model Payment_Method{
+enum OrderStatusEnum {
+  PENDING
+  ACCEPTED
+  CANCELLED
+  OUT_FOR_DELIVERY
+  DELIVERED
+  READY_FOR_PICKUP
+  PICKED_UP
+}
+
+model PaymentMethod {
   id                Int    @id @default(autoincrement())
-  user_id           Int
-  user              User   @relation(fields: [user_id], references: [id])
-  billing_address   Billing_Address[]
+  userId            Int
+  user              User   @relation(fields: [userId], references: [id])
+  billingAddresses  BillingAddress[]
   orders            Order[]
 }
 
-model Payment_Status{
-  id              Int            @id @default(autoincrement())
-  payment_status  String         @unique
+model PaymentStatus {
+  id              Int                 @id @default(autoincrement())
+  paymentStatus   PaymentStatusType 
   orders          Order[]
 }
 
-model Role{
+enum PaymentStatusType {
+  SUCCESS
+  PENDING
+  DECLINED
+  REFUNDED
+}
+
+model Role {
   id            Int           @id @default(autoincrement())
-  role          String        @unique
-  store_roles   Store_Role[]
-  user_roles    User_Role[]
+  role          RoleType      @unique @default(USER)
+  storeRoles    StoreRole[]
+  userRoles     UserRole[]
+}
+enum RoleType {
+  ADMIN
+  USER
+  DRIVER
+  STORE_EMPLOYEE
+  STORE_ADMIN
 }
 
-model Store{
-  id          Int         @id @default(autoincrement())
-  store_name  String      
-  address_id  Int
-  address     Address     @relation(fields: [address_id], references: [id])
-  items       Item[]
-  orders      Order[]
-  store_roles Store_Role[]
-  store_tax   Store_Tax?
-  is_active   Boolean     @default(true)
+model Store {
+  id                  Int                 @id @default(autoincrement())
+  name                String      
+  addressId           Int                 @unique
+  address             Address             @relation(fields: [addressId], references: [id])
+  deliveryPolygon     DeliveryPolygon[]
+  operatingHours      String
+  phoneNumber         String
+  items               Item[]
+  orders              Order[]
+  companyId           Int?
+  company             Company?            @relation(fields: [companyId], references: [id])
+  storeRoles          StoreRole[]
+  storeTax            StoreTax?
+  isActive            Boolean             @default(true)
 }
 
-model Store_Role {
+model StoreRole {
   id              Int         @id @default(autoincrement())
-  user_id         Int
-  user            User        @relation(fields: [user_id], references: [id])
-  store_id        Int
-  store           Store       @relation(fields: [store_id], references: [id])
-  role_id         Int
-  role            Role        @relation(fields: [role_id], references: [id])
+  userId          Int
+  user            User        @relation(fields: [userId], references: [id])
+  storeId         Int
+  store           Store       @relation(fields: [storeId], references: [id])
+  roleId          Int
+  role            Role        @relation(fields: [roleId], references: [id])
 }
 
-model Store_Tax {
-  id       Int    @id @default(autoincrement())
-  store_id Int    @unique
-  store    Store  @relation(fields: [store_id], references: [id])
-  tax_rate Float
-  orders   Order[]
+model StoreTax {
+  id        Int     @id @default(autoincrement())
+  storeId   Int     @unique
+  store     Store   @relation(fields: [storeId], references: [id])
+  taxRate   Float
+  orders    Order[]
 }
 
 model User {
-  id                  Int           @id @default(autoincrement())
-  username            String        @unique
-  email               String        @unique
-  password            String
-  address             Address[]
-  user_roles          User_Role[]
-  billing_addresses   Billing_Address[]
-  delivery_addresses  Delivery_Address[]
-  payment_methods     Payment_Method[]
-  orders              Order[]
-  message_threads     Message_Thread[]
-  authored_messages   Message[] @relation("AuthorRelation")
-  received_messages   Message[] @relation("RecipientRelation")
-  store_roles         Store_Role[]
-  delivery_driver     Delivery_Driver?
+  id                    Int                   @id @default(autoincrement())
+  firstName             String
+  lastName              String
+  email                 String                @unique
+  password              String
+  addresses             Address[]
+  userRoles             UserRole[]
+  billingAddresses      BillingAddress[]
+  deliveryAddresses     DeliveryAddress[]
+  paymentMethods        PaymentMethod[]
+  orders                Order[]
+  messageThreads        MessageThread[]
+  authoredMessages      Message[]             @relation("AuthorRelation")
+  receivedMessages      Message[]             @relation("RecipientRelation")
+  storeRoles            StoreRole[]
+  deliveryDriver        DeliveryDriver?
 }
 
-model User_Role {
-  id       Int      @id @default(autoincrement())
-  user_id  Int
-  user     User     @relation(fields: [user_id], references: [id])
-  role_id  Int
-  role     Role     @relation(fields: [role_id], references: [id])
+model UserRole {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  roleId    Int
+  role      Role     @relation(fields: [roleId], references: [id])
 }

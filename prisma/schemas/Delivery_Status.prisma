@@ -1,5 +1,0 @@
-model Delivery_Status{
-  id          Int            @id @default(autoincrement())
-  status      String
-  deliveries  Delivery[]
-}

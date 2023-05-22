@@ -1,17 +1,18 @@
 model User {
-  id                  Int           @id @default(autoincrement())
-  username            String        @unique
-  email               String        @unique
-  password            String
-  address             Address[]
-  user_roles          User_Role[]
-  billing_addresses   Billing_Address[]
-  delivery_addresses  Delivery_Address[]
-  payment_methods     Payment_Method[]
-  orders              Order[]
-  message_threads     Message_Thread[]
-  authored_messages   Message[] @relation("AuthorRelation")
-  received_messages   Message[] @relation("RecipientRelation")
-  store_roles         Store_Role[]
-  delivery_driver     Delivery_Driver?
+  id                    Int                   @id @default(autoincrement())
+  firstName             String
+  lastName              String
+  email                 String                @unique
+  password              String
+  addresses             Address[]
+  userRoles             UserRole[]
+  billingAddresses      BillingAddress[]
+  deliveryAddresses     DeliveryAddress[]
+  paymentMethods        PaymentMethod[]
+  orders                Order[]
+  messageThreads        MessageThread[]
+  authoredMessages      Message[]             @relation("AuthorRelation")
+  receivedMessages      Message[]             @relation("RecipientRelation")
+  storeRoles            StoreRole[]
+  deliveryDriver        DeliveryDriver?
 }

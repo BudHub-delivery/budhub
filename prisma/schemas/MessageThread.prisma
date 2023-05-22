@@ -1,0 +1,8 @@
+model MessageThread {
+  id              Int            @id @default(autoincrement())
+  orderId         Int
+  order           Order          @relation(fields: [orderId], references: [id])
+  authorId        Int
+  author          User           @relation(fields: [authorId], references: [id])
+  messages        Message[]
+}
