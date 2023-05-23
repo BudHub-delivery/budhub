@@ -1,0 +1,18 @@
+model ItemWeightPrice {
+  id              Int            @id @default(autoincrement())
+  itemId          Int
+  item            Item           @relation(fields: [itemId], references: [id])
+  weight          ItemWeight
+  price           Float
+}
+
+enum ItemWeight {
+  Preroll
+  Gram
+  Eighth
+  Quarter
+  HalfOunce
+  Ounce
+  Pound
+  Package
+}

@@ -1,10 +1,38 @@
 model Item{
-  id             Int            @id @default(autoincrement())
-  store_id       Int
-  store          Store          @relation(fields: [store_id], references: [id])
-  item_name      String
-  item_price     Float
-  item_desc      String?
-  images         Item_Image[]
-  order_items    Order_Item[]
+  id                  Int                   @id @default(autoincrement())
+  storeId             Int       
+  store               Store                 @relation(fields: [storeId], references: [id])
+  itemName            String
+  itemDesc            String?
+  brandName           String?
+  type                ItemType
+  strainType          StrainType
+  containsThc         Boolean
+  containsCbd         Boolean
+  cbdContent          Float?
+  thcContent          Float?
+  ItemWeightPrice     ItemWeightPrice[]
+  images              ItemImage[]
+  orderItems          OrderItem[]
+}
+
+enum ItemType {
+  Packaged_Flower
+  Bulk_Flower
+  Edible
+  Concentrate
+  Cartragidge
+  Vaporizer
+  Topical
+  Preroll
+  Accessory
+  Other
+}
+
+enum StrainType {
+  Indica
+  Sativa
+  Hybrid
+  CBD
+  Other
 }

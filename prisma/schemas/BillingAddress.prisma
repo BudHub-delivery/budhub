@@ -1,0 +1,9 @@
+model BillingAddress {
+  id                  Int             @id @default(autoincrement())
+  userId              Int
+  user                User            @relation(fields: [userId], references: [id])
+  addressId           Int
+  address             Address         @relation(fields: [addressId], references: [id])
+  paymentMethodId     Int
+  paymentMethod       PaymentMethod   @relation(fields: [paymentMethodId], references: [id])
+}

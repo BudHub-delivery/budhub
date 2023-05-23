@@ -1,5 +1,0 @@
-model Payment_Status{
-  id              Int            @id @default(autoincrement())
-  payment_status  String         @unique
-  orders          Order[]
-}

@@ -1,5 +1,0 @@
-model Delivery_Method {
-  id              Int         @id @default(autoincrement())
-  method          String     
-  deliveries      Delivery[]
-}

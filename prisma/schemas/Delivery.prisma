@@ -1,11 +1,11 @@
-model Delivery{
+model Delivery {
   id                  Int               @id @default(autoincrement())
-  order_id            Int
-  order               Order             @relation(fields: [order_id], references: [id])
-  delivery_drive_id   Int
-  delivery_drive      Delivery_Driver    @relation(fields: [delivery_drive_id], references: [id])
-  delivery_method_id  Int
-  delivery_method     Delivery_Method   @relation(fields: [delivery_method_id], references: [id])
-  delivery_status_id  Int
-  delivery_status     Delivery_Status   @relation(fields: [delivery_status_id], references: [id])
+  orderId             Int               @unique
+  order               Order             @relation(fields: [orderId], references: [id])
+  deliveryDriverId    Int
+  deliveryDriver      DeliveryDriver    @relation(fields: [deliveryDriverId], references: [id])
+  deliveryMethodId    Int
+  deliveryMethod      DeliveryMethod    @relation(fields: [deliveryMethodId], references: [id])
+  deliveryStatusId    Int
+  deliveryStatus      DeliveryStatus    @relation(fields: [deliveryStatusId], references: [id])
 }

@@ -1,0 +1,14 @@
+model DeliveryStatus {
+  id          Int                   @id @default(autoincrement())
+  status      DeliveryStatusEnum
+  deliveries  Delivery[]
+}
+
+enum DeliveryStatusEnum {
+  DELIVERED
+  IN_TRANSIT
+  PENDING
+  CANCELLED
+  PICKED_UP
+  READY_FOR_PICKUP
+}

@@ -1,0 +1,12 @@
+model Company {
+  id              Int           @id @default(autoincrement())
+  name            String    
+  description     String?   
+  addressId       Int           @unique
+  address         Address       @relation(fields: [addressId], references: [id])
+  stores          Store[]   
+  isActive        Boolean       @default(true)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  isDeleted       Boolean       @default(false)
+}

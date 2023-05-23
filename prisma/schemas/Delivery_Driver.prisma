@@ -1,7 +1,0 @@
-model Delivery_Driver{
-  id              Int   @id @default(autoincrement())
-  user_id         Int   @unique
-  user            User  @relation(fields: [user_id], references: [id])
-  deliveries      Delivery[]
-  orders          Order[]
-}
