@@ -5,7 +5,8 @@ import { PrismaClient,
   Store,
   Company,
   ItemWeight,
-  Order
+  Order,
+  RoleType
 } from "@prisma/client";
 import UserServices from "../services/userServices";
 import OrderServices from "../services/orderServices";
@@ -242,112 +243,50 @@ class Seeder {
     const userServices = new UserServices();
 
     // Create admin
-     await this.prisma.user.create({
-      data: {
-        firstName: 'Admin',
-        lastName: 'User',
-        email: 'admin@mail.com',
-        password: await userServices.hashPassword('Password1!'),
-        userRoles: {
-          create: {
-            role: {
-              connectOrCreate: {
-                create: { role: 'ADMIN' },
-                where: { role: 'ADMIN' }
-              }
-            }
-          }
-        }
-      }
-    })
+    const admin = {
+      firstName: 'Admin',
+      lastName: 'User',
+      email: 'admin@mail.com',
+      password: 'Password1!',
+    }
 
+    const endUser = {
+      firstName: 'End',
+      lastName: 'User',
+      email: 'user@mail.com',
+      password: 'Password2!',
+    }
+
+    const driverUser = {
+      firstName: 'Driver',
+      lastName: 'User',
+      email: 'driver@mail.com',
+      password: 'Password3!',
+    }
+    
+    const storeEmployee = {
+      firstName: 'Store Employee',
+      lastName: 'User',
+      email: 'store_emp@mail.com',
+      password: 'Password4!',
+    }
+
+    const storeAdmin = {
+      firstName: 'Store Admin',
+      lastName: 'User',
+      email: 'store_admin@mail.com',
+      password: 'Password5!',
+    }
+
+    await userServices.createUser(admin, RoleType.ADMIN);
     // Create user
-    const endUser = await this.prisma.user.create({
-      data: {
-        firstName: 'End',
-        lastName: 'User',
-        email: 'user@mail.com',
-        password: await userServices.hashPassword('Password2!'),
-        userRoles: {
-          create: {
-            role: {
-              connectOrCreate: {
-                create: { role: 'USER' },
-                where: { role: 'USER' }
-              }
-            }
-          }
-        }
-      }
-    })
-
-    this.setEndUser(endUser);
-
-    // Create driver
-    const DriverUser = await this.prisma.user.create({
-      data: {
-        firstName: 'Driver',
-        lastName: 'User',
-        email: 'driver@mail.com',
-        password: await userServices.hashPassword('Password3!'),
-        userRoles: {
-          create: {
-            role: {
-              connectOrCreate: {
-                create: { role: 'DRIVER' },
-                where: { role: 'DRIVER' }
-              }
-            }
-          }
-        }
-      }
-    })
-
-    this.setDriverUser(DriverUser);
-
-    // Create storeEmployee
-    const storeEmployee = await this.prisma.user.create({
-      data: {
-        firstName: 'Store Employee',
-        lastName: 'User',
-        email: 'store_emp@mail.com',
-        password: await userServices.hashPassword('Password4!'),
-        userRoles: {
-          create: {
-            role: {
-              connectOrCreate: {
-                create: { role: 'STORE_EMPLOYEE' },
-                where: { role: 'STORE_EMPLOYEE' }
-              }
-            }
-          }
-        }
-      }
-    })
-
-    this.setStoreEmployee(storeEmployee);
-
-    // Create storeAdmin
-    const storeAdmin = await this.prisma.user.create({
-      data: {
-        firstName: 'Store Admin',
-        lastName: 'User',
-        email: 'store_admin@mail.com',
-        password: await userServices.hashPassword('Password5!'),
-        userRoles: {
-          create: {
-            role: {
-              connectOrCreate: {
-                create: { role: 'STORE_ADMIN' },
-                where: { role: 'STORE_ADMIN' }
-              }
-            }
-          }
-        }
-      }
-    });
-
-    this.setStoreAdmin(storeAdmin);
+    this.setEndUser(await userServices.createUser(endUser));
+    // Create Driver
+    this.setDriverUser(await userServices.createUser(driverUser));
+    // Create Store Employee
+    this.setStoreEmployee(await userServices.createUser(storeEmployee));
+    // Create Store Admin
+    this.setStoreAdmin(await userServices.createUser(storeAdmin));
   }
 
   private async createStoreRole () {
