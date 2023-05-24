@@ -3,7 +3,7 @@ model ItemWeightPrice {
   itemId          Int
   item            Item           @relation(fields: [itemId], references: [id])
   weight          ItemWeight
-  price           Float
+  price           Decimal
 }
 
 enum ItemWeight {

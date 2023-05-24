@@ -10,6 +10,7 @@ import { PrismaClient,
 import UserServices from "../services/userServices";
 import OrderServices from "../services/orderServices";
 import itemServices from "../services/itemServices";
+import { Decimal } from 'decimal.js'
 
 const prisma = new PrismaClient();
 
@@ -561,32 +562,33 @@ class Seeder {
       }
     ]
 
-    const deliveryFee = 5.00;
-    const deliveryTip = 15.00;
-    const salesTax = await orderService.calculateTax(itemsData, storeTax.taxRate);
+    const deliveryFee: Decimal = new Decimal(5.00);
+    const deliveryTip: Decimal = new Decimal(15.00);
+
+    const salesTax = await orderService.calculateTax(itemsData, new Decimal(storeTax.taxRate));
+
+    const orderObj: Omit<Order, 'id' | 'createdAt' | 'updatedAt' | 'deliveryDriverId'>  = {
+      userId: this._endUser.id,
+      storeId: this._store.id,
+      addressId: address.id,
+      requestedTime: new Date(),
+      orderStatusId: 1,
+      paymentMethodId: 1,
+      storeTaxId: storeTax.id,
+      deliveryTip: deliveryTip,
+      paymentStatusId: 1,
+      deliveryFee: deliveryFee,
+      orderTotal: await orderService.calculateTotal(
+        itemsData, 
+        salesTax, 
+        deliveryFee, 
+        deliveryTip),
+      deliveryMethodId: 1,
+    };
+
 
     try {
-      const createdOrder: Order = await orderService.createOrder(
-        {
-          userId: this._endUser.id,
-          storeId: this._store.id,
-          addressId: address.id,
-          requestedTime: new Date(),
-          orderStatusId: 1,
-          paymentMethodId: 1,
-          storeTaxId: storeTax.id,
-          deliveryTip: deliveryTip,
-          paymentStatusId: 1,
-          deliveryFee: deliveryFee,
-          orderTotal: await orderService.calculateTotal(
-            itemsData, 
-            salesTax, 
-            deliveryFee, 
-            deliveryTip),
-          deliveryMethodId: 1,
-          itemsData: itemsData
-        }
-      );
+      const createdOrder: Order = await orderService.createOrder(orderObj as Order, itemsData);
     } catch (error) {
       console.error('Error Seeing order: ', error);
     }

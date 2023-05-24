@@ -1,4 +1,5 @@
 import { Prisma, PrismaClient, ItemWeight, ItemWeightPrice } from '@prisma/client';
+import { Decimal } from 'decimal.js';
 
 class ItemServices {
   private prisma: PrismaClient;
@@ -7,7 +8,7 @@ class ItemServices {
     this.prisma = prisma;
   }
 
-  async getItemWeightPrice(itemId: number, weight: ItemWeight): Promise<number> {
+  async getItemWeightPrice(itemId: number, weight: ItemWeight): Promise<Decimal> {
     const itemWeightPrice = await this.prisma.itemWeightPrice.findFirst({
       where: {
         itemId: itemId,
@@ -18,8 +19,10 @@ class ItemServices {
     if (!itemWeightPrice) {
       throw new Error(`No price found for item with ID ${itemId} and weight ${weight}`);
     }
+
+    const price = itemWeightPrice.price;
   
-    return itemWeightPrice.price;
+    return price;
   }
 
 }

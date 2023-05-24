@@ -2,6 +2,6 @@ model StoreTax {
   id        Int     @id @default(autoincrement())
   storeId   Int     @unique
   store     Store   @relation(fields: [storeId], references: [id])
-  taxRate   Float
+  taxRate   Decimal
   orders    Order[]
 }

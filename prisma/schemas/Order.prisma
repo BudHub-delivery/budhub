@@ -7,7 +7,7 @@ model Order {
   addressId               Int
   address                 Address           @relation(fields: [addressId], references: [id])
   orderStatusId           Int
-  orderStatus             OrderStatus       @default() @relation(fields: [orderStatusId], references: [id])
+  orderStatus             OrderStatus       @relation(fields: [orderStatusId], references: [id])
   paymentMethodId         Int
   paymentMethod           PaymentMethod     @relation(fields: [paymentMethodId], references: [id])
   paymentStatusId         Int
@@ -18,12 +18,12 @@ model Order {
   storeTax                StoreTax          @relation(fields: [storeTaxId], references: [id])
   deliveryMethodId        Int
   deliveryMethod          DeliveryMethod    @relation(fields: [deliveryMethodId], references: [id])
-  deliveryFee             Float 
-  deliveryTip             Float 
+  deliveryFee             Decimal 
+  deliveryTip             Decimal 
   requestedTime           DateTime  
   createdAt               DateTime          @default(now())
   updatedAt               DateTime          @updatedAt
-  orderTotal              Float
+  orderTotal              Decimal
   delivery                Delivery?
   messageThreads          MessageThread[]
   orderItems              OrderItem[]

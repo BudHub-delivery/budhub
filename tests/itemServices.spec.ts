@@ -1,5 +1,6 @@
 import { PrismaClient, ItemWeight, Item, ItemWeightPrice, ItemType, StrainType } from '@prisma/client';
 import ItemServices from '../services/itemServices';
+import { Decimal } from 'decimal.js';
 
 describe('ItemServices', () => {
 
@@ -69,11 +70,11 @@ describe('ItemServices', () => {
       items = [item];
 
       const weight = ItemWeight.Gram;
-      const expectedPrice = 10;
+      const expectedPrice = new Decimal(10);
 
       const itemWeightPrice = await itemServices.getItemWeightPrice(item.id, weight);
 
-      expect(itemWeightPrice).toBe(expectedPrice);
+      expect(itemWeightPrice.toNumber()).toBe(expectedPrice.toNumber());
     });
   });
 });

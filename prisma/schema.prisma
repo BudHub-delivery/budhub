@@ -1,6 +1,6 @@
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -128,7 +128,7 @@ model Item{
   containsCbd         Boolean
   cbdContent          Float?
   thcContent          Float?
-  ItemWeightPrice     ItemWeightPrice[]     // TODO: change to lowercase itemWeightPrice  
+  ItemWeightPrice     ItemWeightPrice[]
   images              ItemImage[]
   orderItems          OrderItem[]
 }
@@ -167,7 +167,7 @@ model ItemWeightPrice {
   itemId          Int
   item            Item           @relation(fields: [itemId], references: [id])
   weight          ItemWeight
-  price           Float
+  price           Decimal
 }
 
 enum ItemWeight {
@@ -232,12 +232,12 @@ model Order {
   storeTax                StoreTax          @relation(fields: [storeTaxId], references: [id])
   deliveryMethodId        Int
   deliveryMethod          DeliveryMethod    @relation(fields: [deliveryMethodId], references: [id])
-  deliveryFee             Float 
-  deliveryTip             Float 
+  deliveryFee             Decimal 
+  deliveryTip             Decimal 
   requestedTime           DateTime  
   createdAt               DateTime          @default(now())
   updatedAt               DateTime          @updatedAt
-  orderTotal              Float
+  orderTotal              Decimal
   delivery                Delivery?
   messageThreads          MessageThread[]
   orderItems              OrderItem[]
@@ -247,11 +247,11 @@ model OrderItem {
   id            Int          @id @default(autoincrement())
   itemId        Int
   item          Item         @relation(fields: [itemId], references: [id])
-  orderId       Int
-  order         Order        @relation(fields: [orderId], references: [id])
+  orderId       Int?
+  order         Order?        @relation(fields: [orderId], references: [id])
   itemQuantity  Int
   itemWeight    ItemWeight
-  itemPrice     Float
+  itemPrice     Decimal
 }
 
 model OrderStatus {
@@ -336,7 +336,7 @@ model StoreTax {
   id        Int     @id @default(autoincrement())
   storeId   Int     @unique
   store     Store   @relation(fields: [storeId], references: [id])
-  taxRate   Float
+  taxRate   Decimal
   orders    Order[]
 }
 

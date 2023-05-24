@@ -19,11 +19,11 @@
   1. Install Node.js https://nodejs.org/dist/v18.16.0/node-v18.16.0-x64.msi 
   2. Clone the data from this git repository 
   3. Install NPM https://docs.npmjs.com/cli/v6/configuring-npm/install 
-  5. Install and Configure MySQL https://dev.mysql.com/downloads/installer/
+  5. Install and Configure PostgreSQL https://www.postgresql.org/download/installer/
   6. Rename .env.EXAMPLE to .env and configure with your DB Credentials
   7. Navigate to the git repo using your preferred CommandLine Application (Recommended GitBash or Inline Terminal within VSCode)
-  8. Run `npm run install` from the `/budhub/` directory
-  9. Run `npm run db_setup`
+  8. Run `npm run setup` from the `/budhub/` directory
+  9. Run `npm run deploy`
   
   ## Usage
   This application is intended to be used to Order Cannabis from Dispencaries.
