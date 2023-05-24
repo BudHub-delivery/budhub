@@ -44,7 +44,6 @@ class OrderServices {
       // }
 
       const itemTotalPrice = item.itemWeightPrice.times(item.itemQuantity);
-      console.log(itemTotalPrice);
       orderTotal = orderTotal.plus(itemTotalPrice);
     });    
   
