@@ -6,7 +6,7 @@ const schemaFiles = fs.readdirSync(schemasPath);
 
 const datasource = `
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 

@@ -1,14 +1,18 @@
 import { PrismaClient, ItemWeight, Order, OrderItem } from '@prisma/client';
 import OrderServices from '../services/orderServices';
+import ItemServices from '../services/itemServices';
+import Decimal from 'decimal.js';
 
 describe('OrderServices', () => {
   let prisma: PrismaClient;
   let orderServices: OrderServices;
   let order: Order;
+  let itemServices: ItemServices;
 
   beforeAll(() => {
     prisma = new PrismaClient();
     orderServices = new OrderServices(prisma);
+    itemServices = new ItemServices(prisma);
   });
 
   afterAll(async () => {
@@ -35,84 +39,85 @@ describe('OrderServices', () => {
           itemId: 1,
           itemWeight: ItemWeight.Gram,
           itemQuantity: 2,
-          itemWeightPrice: 10,
+          itemWeightPrice: new Decimal(10),
         },
         {
           itemId: 2,
           itemWeight: ItemWeight.Eighth,
           itemQuantity: 1,
-          itemWeightPrice: 35,
+          itemWeightPrice: new Decimal(35),
         },
       ];
-      const storeTax = 5;
+      const storeTax = new Decimal(5);
 
       const salesTax = await orderServices.calculateTax(itemsData, storeTax);
+      const expectedTax = new Decimal(2.75);
 
-      expect(salesTax).toBe(2.75); // Expected sales tax based on the provided data
+      expect(salesTax.toNumber()).toBe(expectedTax.toNumber()); // Expected sales tax based on the provided data
     });
+  });
 
-    it('should throw an error for items with missing price', async () => {
+  describe('calculateTotal', () => {
+    it('should calculate the correct sales tax', async () => {
       const itemsData = [
         {
           itemId: 1,
           itemWeight: ItemWeight.Gram,
+          itemQuantity: 2,
+          itemWeightPrice: new Decimal(10),
+        },
+        {
+          itemId: 2,
+          itemWeight: ItemWeight.Eighth,
           itemQuantity: 1,
-          itemWeightPrice: null,
+          itemWeightPrice: new Decimal(35),
         },
       ];
-      const storeTax = 5;
+      const storeTax = new Decimal(4.12);
+      const deliveryFee = new Decimal(3);
+      const deliveryTip = new Decimal(5);
 
-      await expect(orderServices.calculateTax(itemsData, storeTax)).rejects.toThrow(
-        'No price found for item with ID 1 and weight Gram'
-      );
+      const total = await orderServices
+        .calculateTotal(itemsData, storeTax, deliveryFee, deliveryTip);
+      const expectedTotal = 67.12;
+
+      expect(total.toNumber()).toBe(expectedTotal); 
     });
   });
 
   it('should create an order with order items', async () => {
     // Test data
-    const userId = 1;
-    const storeId = 1;
-    const addressId = 1;
-    const requestedTime = new Date();
-    const orderStatusId = 1;
-    const paymentMethodId = 1;
-    const storeTaxId = 1;
-    const deliveryTip = 5;
-    const paymentStatusId = 1;
-    const deliveryFee = 3;
-    const orderTotal = 100;
-    const deliveryMethodId = 1;
+    const orderObj:Omit<Order, 'id' | 'createdAt' | 'updatedAt' | 'deliveryDriverId'>  =  {
+    userId: 1,
+    storeId: 1,
+    addressId: 1,
+    requestedTime: new Date(),
+    orderStatusId: 1,
+    paymentMethodId: 1,
+    storeTaxId: 1,
+    deliveryTip: new Decimal(5),
+    paymentStatusId: 1,
+    deliveryFee: new Decimal(3),
+    orderTotal: new Decimal(100),
+    deliveryMethodId: 1,
+    };
     const itemsData = [
       {
         itemId: 1,
         itemWeight: ItemWeight.Gram,
         itemQuantity: 2,
-        itemWeightPrice: 10,
+        itemWeightPrice: await itemServices.getItemWeightPrice(1, ItemWeight.Gram)
       },
       {
         itemId: 2,
         itemWeight: ItemWeight.Eighth,
         itemQuantity: 1,
-        itemWeightPrice: 20,
+        itemWeightPrice: await itemServices.getItemWeightPrice(2, ItemWeight.Eighth)
       },
     ];
 
     // Create the order
-    const createdOrder = await orderServices.createOrder({
-      userId,
-      storeId,
-      addressId,
-      requestedTime,
-      orderStatusId,
-      paymentMethodId,
-      storeTaxId,
-      deliveryTip,
-      paymentStatusId,
-      deliveryFee,
-      orderTotal,
-      deliveryMethodId,
-      itemsData,
-    });
+    const createdOrder = await orderServices.createOrder(orderObj as Order, itemsData);
 
     order = createdOrder
 
@@ -131,7 +136,7 @@ describe('OrderServices', () => {
     expect(orderItem1.itemId).toBe(1);
     expect(orderItem1.itemWeight).toBe(ItemWeight.Gram);
     expect(orderItem1.itemQuantity).toBe(2);
-    expect(orderItem1.itemPrice).toBe(10);
+    expect(orderItem1.itemPrice.toNumber()).toBe(10);
 
     // Verify the second order item
     const orderItem2 = orderItems[1];
@@ -139,6 +144,6 @@ describe('OrderServices', () => {
     expect(orderItem2.itemId).toBe(2);
     expect(orderItem2.itemWeight).toBe(ItemWeight.Eighth);
     expect(orderItem2.itemQuantity).toBe(1);
-    expect(orderItem2.itemPrice).toBe(20);
+    expect(orderItem2.itemPrice.toNumber()).toBe(35);
   });
 });
