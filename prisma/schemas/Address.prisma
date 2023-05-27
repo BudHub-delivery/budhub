@@ -12,8 +12,8 @@ model Address {
   updatedAt           DateTime             @updatedAt
   latitude            Float?               // Created using GoogleAPI Call during address creation   
   longitude           Float?               // Created using GoogleAPI Call during address creation   
-  billingAddresses    BillingAddress[]
-  deliveryAddresses   DeliveryAddress[]
+  billingAddresses    BillingAddress[]     
+  deliveryAddresses   DeliveryAddress[]    
   orders              Order[]
   store               Store?
   company             Company?
