@@ -1,6 +1,6 @@
 import { PrismaClient, ItemWeight, Order, OrderItem } from '@prisma/client';
-import OrderServices from '../services/orderServices';
-import ItemServices from '../services/itemServices';
+import OrderServices from '../../services/orderServices';
+import ItemServices from '../../services/itemServices';
 import Decimal from 'decimal.js';
 
 describe('OrderServices', () => {

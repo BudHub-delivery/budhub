@@ -1,4 +1,4 @@
-import AddressServices from '../services/addressServices';
+import AddressServices from '../../services/addressServices';
 import { PrismaClient, Address, DeliveryAddress } from '@prisma/client';
 import fetchMock from 'jest-fetch-mock';
 
