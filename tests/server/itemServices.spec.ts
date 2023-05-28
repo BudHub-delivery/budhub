@@ -1,5 +1,5 @@
 import { PrismaClient, ItemWeight, Item, ItemWeightPrice, ItemType, StrainType } from '@prisma/client';
-import ItemServices from '../services/itemServices';
+import ItemServices from '../../services/itemServices';
 import { Decimal } from 'decimal.js';
 
 describe('ItemServices', () => {
