@@ -92,6 +92,38 @@ class OrderServices {
   
     return createdOrder;
   }  
+
+  async getStoreOrders(storeId: number): Promise<Order[]> {
+    return await this.prisma.order.findMany({
+      where: {
+        storeId: storeId
+      }
+    });
+  }
+
+  async getOrdersByUser(userId: number): Promise<Order[]> {
+
+    return await this.prisma.order.findMany({
+      where: {
+        userId: userId
+      }
+    });
+  }
+
+  async getOrderById(orderId: number): Promise<Order> {
+
+    const order = await this.prisma.order.findUnique({
+      where: {
+        id: orderId
+      }
+    });
+
+    if(!order) {
+      throw new Error('Order not found');
+    }
+
+    return order;
+  }
   
 }
 

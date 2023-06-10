@@ -15,8 +15,8 @@ describe('Address Services', () => {
     state: 'CO',
     zip: '80206',
     userId: 1,
-    lat: 0.0,
-    long: 0.0,
+    latitute: 0.0,
+    longitute: 0.0,
     deliveryNotes: 'Leave at door'
   };
 
@@ -142,8 +142,6 @@ describe('Address Services', () => {
       state: address.state,
       zip: address.zip
     }
-
-    console.log(addressPayload);
 
     expect(addressPayload).toEqual({
       addressLine1: '1620 Fillmore Street',

@@ -1,19 +1,25 @@
 import * as bcrypt from 'bcryptjs';
 import { PrismaClient, User, RoleType } from '@prisma/client';
+const { randomBytes } = require('node:crypto');
+
 require('dotenv').config();
 
 export default class UserServices {
+
+  private prisma: PrismaClient;
+
+  constructor() {
+    this.prisma = new PrismaClient();
+  }
 
   async createUser(payload: { 
       firstName: string, 
       lastName: string,
       email: string,
-      password: string
+      password: string,
     },
     roleType?: RoleType | null
     ): Promise<User> {
-
-    const prisma = new PrismaClient();
 
     if(!this.validateEmail(payload.email)){
       throw new Error('Invalid email format, must be in the form of "username@domain.com"');
@@ -27,7 +33,7 @@ export default class UserServices {
       roleType = RoleType.USER;
     }
 
-    return await prisma.user.create({
+    return await this.prisma.user.create({
       data: {
         ...payload,
         password: await this.hashPassword(payload.password),
@@ -76,5 +82,22 @@ export default class UserServices {
     emailRegex = new RegExp(/.+@.+\..+/);
   
     return emailRegex.test(email);
+  }
+
+  async generateTempPassword(): Promise<string> {
+    var tempPassword = randomBytes(16).toString('hex');
+    const specialChar = '!@#$%^&*()_+{}:"<>?|[];\',./`~';
+    const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const randomChars = [
+      specialChar[Math.floor(Math.random() * specialChar.length)],
+      uppercase[Math.floor(Math.random() * uppercase.length)]
+    ]
+    
+    for(let randomChar of randomChars){
+      const index = Math.floor(Math.random() * (tempPassword.length + 1));
+      tempPassword = tempPassword.slice(0, index) + randomChar + tempPassword.slice(index);
+    }
+  
+    return tempPassword
   }
 }
