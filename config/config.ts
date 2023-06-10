@@ -4,5 +4,5 @@ export const config = {
   },
   googleApi: {
     googleApiKey: process.env.GOOGLE_API_KEY || 'secret',
-  }
+  },
 };

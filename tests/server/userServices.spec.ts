@@ -1,5 +1,5 @@
 import * as bcrypt from 'bcryptjs';
-import UserServices from '../services/userServices';
+import UserServices from '../../services/userServices';
 import { PrismaClient, RoleType, User } from '@prisma/client';
 import exp from 'constants';
 
@@ -68,7 +68,13 @@ describe('UserServices Validators', () => {
     
     expect(isValidEmail).toBe(false);
   });
-  // Additional tests...
+
+  it('should generate a temporary password that passes validation', async () => {
+      const tempPassword = await userServices.generateTempPassword();
+      const isValidPassword = await userServices.validatePassword(tempPassword);
+  
+      expect(isValidPassword).toBe(true);
+  });
 });
 
 describe('UserServices CRUD Actions', () => {
