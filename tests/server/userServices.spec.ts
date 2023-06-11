@@ -1,8 +1,10 @@
 import * as bcrypt from 'bcryptjs';
 import UserServices from '../../services/userServices';
+
 import MailerService from '../../services/mailerServices';
 import { PrismaClient, RoleType, User } from '@prisma/client';
 import jwtAuthServices from '../../services/jwtAuthServices';
+import { log } from 'console';
 
 interface Role {
   id: number;
@@ -49,23 +51,24 @@ describe('UserServices Validators', () => {
 
   it('should validate correct password', async () => {
 
-    const plainTextPassword = 'password';
+    const plainTextPassword = 'Password1!';
     const hashedPassword = await userServices.hashPassword(plainTextPassword);
-    const isValidPassword = await userServices.validatePasswordHash(plainTextPassword, hashedPassword);
+    console.log(hashedPassword);
+    const isValidPassword = userServices.validatePasswordHash(plainTextPassword, hashedPassword);
 
     expect(isValidPassword).toBe(true);
   });
 
   it('should validate incorrect password format', async () => {
-    const plainTextPassword = 'password';
-    const isValidFormat = await userServices.validatePassword(plainTextPassword);
+    const plainTextPassword = 'Password1!';
+    const isValidFormat = userServices.validatePassword(plainTextPassword);
 
     expect(isValidFormat).toBe(false);
   });
 
   it('should validate correct password format', async () => {
     const plainTextPassword = 'Password1!';
-    const isValidFormat = await userServices.validatePassword(plainTextPassword);
+    const isValidFormat = userServices.validatePassword(plainTextPassword);
 
     expect(isValidFormat).toBe(true);
   });
@@ -85,7 +88,13 @@ describe('UserServices Validators', () => {
     
     expect(isValidEmail).toBe(false);
   });
-  // Additional tests...
+
+  it('should generate a temporary password that passes validation', async () => {
+      const tempPassword = await userServices.generateTempPassword();
+      const isValidPassword = await userServices.validatePassword(tempPassword);
+  
+      expect(isValidPassword).toBe(true);
+  });
 });
 
 describe('UserServices CRUD Actions', () => {

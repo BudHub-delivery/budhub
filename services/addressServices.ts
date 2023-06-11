@@ -1,16 +1,16 @@
 import { Address, PrismaClient } from "@prisma/client";
 
 
-interface AddressPayload {
+export interface AddressPayload {
   addressLine1: string;
   addressLine2: string;
   city: string;
   state: string;
   zip: string;
-  userId: number;
-  lat: number;
-  long: number;
-  deliveryNotes: string;
+  userId: number | null;
+  latitute: number;
+  longitute: number;
+  deliveryNotes: string | null;
 }
 
 interface AddressComponent {
@@ -58,8 +58,8 @@ export default class AddressServices {
       addressPayload.city = addressComponents.city
       addressPayload.state = addressComponents.state
       addressPayload.zip = addressComponents.zip
-      addressPayload.lat = response.results[0].geometry.location.lat
-      addressPayload.long = response.results[0].geometry.location.lng
+      addressPayload.latitute = response.results[0].geometry.location.lat
+      addressPayload.longitute = response.results[0].geometry.location.lng
       
       return addressPayload
     }
@@ -85,12 +85,12 @@ export default class AddressServices {
         state: addressPayload.state,
         zip: addressPayload.zip,
         userId: addressPayload.userId,
-        latitude: addressPayload.lat,
-        longitude: addressPayload.long,
+        latitude: addressPayload.latitute,
+        longitude: addressPayload.longitute,
         deliveryNotes: addressPayload.deliveryNotes
       }   
     });
-    
+        
     await this.setDeliveryAddress(address.id, addressPayload.userId);
 
     return address;
