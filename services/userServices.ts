@@ -37,7 +37,7 @@ export default class UserServices {
       roleType = RoleType.USER;
     }
 
-    return await this.prisma.user.create({
+    const user = await this.prisma.user.create({
       data: {
         ...payload,
         password: await this.hashPassword(payload.password),
@@ -53,16 +53,22 @@ export default class UserServices {
         }
       }
     });
+
+    await this.sendResetConfirmEmail(user, 'userInvitation');
+
+    return user;
+
   }
 
+  // Get user by email
   async getUserByEmail(email: string): Promise<User | null> {
-    const prisma = new PrismaClient();
-    return await prisma.user.findUnique({
+    return await this.prisma.user.findUnique({
       where: { email: email }
     });
   }
   
-  hashPassword(plain_text_password: string){
+  // Hash password
+  async hashPassword(plain_text_password: string){
     let saltRounds: number;
  
     if (process.env.SALT_ROUNDS !== undefined) {
@@ -72,13 +78,15 @@ export default class UserServices {
         // Maybe throw an error, or set a default value.
         throw new Error("SALT_ROUNDS environment variable is not defined");
     }
-    return bcrypt.hash(plain_text_password, saltRounds);
+    return await bcrypt.hash(plain_text_password, saltRounds);
   }
 
-  validatePasswordHash(plain_text_password: string, hashed_password: string){
-    return bcrypt.compare(plain_text_password, hashed_password);
+  // Validate password hash
+  async validatePasswordHash(plain_text_password: string, hashed_password: string){
+    return await bcrypt.compare(plain_text_password, hashed_password);
   }
 
+  // Validate password format
   validatePassword(plain_text_password: string): boolean{
     let passwordRegex: RegExp;
     // must contain at least one lowercase letter, one uppercase letter, one digit, one special character, and be at least 8 characters in length.
@@ -87,6 +95,7 @@ export default class UserServices {
     return passwordRegex.test(plain_text_password);
   }
   
+  // Validate email format
   validateEmail(email: string): boolean{
     let emailRegex: RegExp;
     // must be in the form of "username@domain"
@@ -95,12 +104,12 @@ export default class UserServices {
     return emailRegex.test(email);
   }
 
+  // Login user and return a JWT amnd user object
   async loginUser(email: string, password: string): Promise<any>{
 
     const jwtAuthService = new jwtAuthServices();
 
-    const prisma = new PrismaClient();
-    const user = await prisma.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: { email: email }
     });
 
@@ -109,17 +118,8 @@ export default class UserServices {
     }
 
     if(!user.emailConfirmed){
-      const token = await jwtAuthService.signToken(user);
 
-      const url = `${process.env.CLIENT_URL}/confirm-email?token=${token}`;
-      const userPayload = {
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        url: url
-      }
-      
-      new MailerServices('userInvitation', userPayload).sendMail();
+      await this.sendResetConfirmEmail(user, 'userInvitation');
 
       throw new Error('Please confirm your email address before you can login.');
     }
@@ -136,7 +136,7 @@ export default class UserServices {
 
     const token = await jwtAuthService.signToken(user);
 
-    return user;
+    return {token, user};
   }
   
   // Send a password reset email
@@ -149,20 +149,7 @@ export default class UserServices {
       throw new Error('Password email will be sent!');
     }
 
-    const jwtAuthService = new jwtAuthServices();
-
-    // If user exists, create a token and send the password reset email
-    const token = await jwtAuthService.signToken(user);
-    const url = `${process.env.CLIENT_URL}/reset-password?token=${token}`;
-
-    const userPayload = {
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      url: url
-    }
-
-    new MailerServices('passwordReset', userPayload).sendMail();
+    await this.sendResetConfirmEmail(user, 'passwordReset');
 
     return user;
     
@@ -171,7 +158,6 @@ export default class UserServices {
   // Validate the token and reset the password
   async resetPassword(token: string, password: string): Promise<any>{
     const jwtAuthService = new jwtAuthServices();
-    const prisma = new PrismaClient();
 
     const validToken = await jwtAuthService.verifyToken(token);
 
@@ -180,7 +166,7 @@ export default class UserServices {
     }
 
     const { data }: any = await jwtAuthService.verifyToken(token);
-    const user = await prisma.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: { id: data.id }
     });
 
@@ -190,7 +176,7 @@ export default class UserServices {
 
     const hashedPassword = await this.hashPassword(password);
 
-    await prisma.user.update({
+    await this.prisma.user.update({
       where: { id: data.id },
       data: { password: hashedPassword }
     });
@@ -199,9 +185,9 @@ export default class UserServices {
 
   }
 
+  // Validate the token and confirm the email
   async confirmEmail(token: string): Promise<any>{
     const jwtAuthService = new jwtAuthServices();
-    const prisma = new PrismaClient();
 
     const validToken = await jwtAuthService.verifyToken(token);
 
@@ -210,7 +196,7 @@ export default class UserServices {
     }
 
     const { data }: any = await jwtAuthService.verifyToken(token);
-    const user = await prisma.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: { id: data.id }
     });
 
@@ -218,7 +204,7 @@ export default class UserServices {
       throw new Error('There was an error confirming your email, please try again later.');
     }
 
-    await prisma.user.update({
+    await this.prisma.user.update({
       where: { id: data.id },
       data: { emailConfirmed: true }
     });
@@ -226,6 +212,8 @@ export default class UserServices {
     return token;
 
   }
+
+  // Generate a temporary password for the user created by the admin user at store level  
   async generateTempPassword(): Promise<string> {
     var tempPassword = randomBytes(16).toString('hex');
     const specialChar = '!@#$%^&*()_+{}:"<>?|[];\',./`~';
@@ -241,6 +229,37 @@ export default class UserServices {
     }
   
     return tempPassword
+
+  }
+
+  async sendResetConfirmEmail(user: User, event: string, storeName = null): Promise<any>{
+    const jwtAuthService = new jwtAuthServices();
+
+    const token = await jwtAuthService.signToken(user);
+
+    let url: string;
+
+    switch(event){
+      case 'passwordReset':
+        url = `${process.env.CLIENT_URL}/reset-password?token=${token}`;
+        break;
+      case 'userInvitation' || 'storeUserInvitation':
+        url = `${process.env.CLIENT_URL}/confirm-email?token=${token}`;
+        break;
+      default:
+        url = `${process.env.CLIENT_URL}`;
+        break;
+    }
+
+    const userPayload = {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      url: url,
+      storeName: storeName
+    }
+      
+    new MailerServices(event, userPayload).sendMail();
 
   }
 }

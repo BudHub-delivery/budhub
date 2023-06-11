@@ -55,10 +55,7 @@ export default class JwtAuthServices {
     
     // Create payload containing user information and sign token
     const payload = {
-      id: user.id, 
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
+      id: user.id
     }
 
     return jwt.sign({ data: payload }, this.secret, { expiresIn: exp });
