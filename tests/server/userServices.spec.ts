@@ -1,7 +1,9 @@
 import * as bcrypt from 'bcryptjs';
 import UserServices from '../../services/userServices';
+
+import MailerService from '../../services/mailerServices';
 import { PrismaClient, RoleType, User } from '@prisma/client';
-import exp from 'constants';
+import jwtAuthServices from '../../services/jwtAuthServices';
 
 interface Role {
   id: number;
@@ -32,7 +34,7 @@ describe('UserServices Validators', () => {
 
   it('should validate correct password', async () => {
 
-    const plainTextPassword = 'password';
+    const plainTextPassword = 'Password1!';
     const hashedPassword = await userServices.hashPassword(plainTextPassword);
     const isValidPassword = await userServices.validatePasswordHash(plainTextPassword, hashedPassword);
 
@@ -40,7 +42,7 @@ describe('UserServices Validators', () => {
   });
 
   it('should validate incorrect password format', async () => {
-    const plainTextPassword = 'password';
+    const plainTextPassword = 'Password';
     const isValidFormat = await userServices.validatePassword(plainTextPassword);
 
     expect(isValidFormat).toBe(false);
@@ -48,7 +50,7 @@ describe('UserServices Validators', () => {
 
   it('should validate correct password format', async () => {
     const plainTextPassword = 'Password1!';
-    const isValidFormat = await userServices.validatePassword(plainTextPassword);
+    const isValidFormat = userServices.validatePassword(plainTextPassword);
 
     expect(isValidFormat).toBe(true);
   });
@@ -201,5 +203,4 @@ describe('UserServices CRUD Actions', () => {
     await expect(userServices.createUser(invalidPayload)).rejects.toThrow('Invalid email format, must be in the form of "username@domain.com"');
 
   });
-
 });
