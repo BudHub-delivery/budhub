@@ -1,7 +1,8 @@
 import * as bcrypt from 'bcryptjs';
-import UserServices from '../services/userServices';
+import UserServices from '../../services/userServices';
+import MailerService from '../../services/mailerServices';
 import { PrismaClient, RoleType, User } from '@prisma/client';
-import exp from 'constants';
+import jwtAuthServices from '../../services/jwtAuthServices';
 
 interface Role {
   id: number;
@@ -14,6 +15,22 @@ interface UserRole {
   roleId: number;
   role: Role;
 }
+
+jest.mock('@prisma/client', () => {
+  return {
+    PrismaClient: jest.fn().mockImplementation(() => {
+      return {
+        user: {
+          findUnique: jest.fn(),
+        },
+      };
+    }),
+  };
+});
+
+jest.mock("../../services/userServices");
+jest.mock("../../services/jwtAuthServices");
+jest.mock("../../services/mailerServices");
 
 describe('UserServices Validators', () => {
 
@@ -195,5 +212,74 @@ describe('UserServices CRUD Actions', () => {
     await expect(userServices.createUser(invalidPayload)).rejects.toThrow('Invalid email format, must be in the form of "username@domain.com"');
 
   });
+});
+
+describe('UserServices Token Validators', () => {
+
+  let userService: UserServices;
+  let mockUser: any;
+  let mockJwtAuthService: any;
+  let mockPrisma: any;
+
+  beforeEach(() => {
+    mockJwtAuthService = new jwtAuthServices;
+    mockPrisma = new PrismaClient();
+    userService = new UserServices();
+
+    mockUser = {
+      email: "john@example.com",
+      password: "hashedPassword",
+      firstName: "John",
+      lastName: "Doe",
+      emailConfirmed: true
+    };
+    
+    (userService.validatePasswordHash as jest.Mock) = jest.fn();
+  });
+
+  it('should return user if token is valid', async () => {
+
+    mockPrisma.user.findUnique.mockResolvedValue(mockUser);
+    (userService.validatePasswordHash as jest.Mock).mockResolvedValue(true);
+    mockJwtAuthService.signToken.mockResolvedValue('token');
+
+    const results = await userService.loginUser(mockUser.email, mockUser.password);
+
+    expect(results).toEqual(mockUser);
+    expect(mockPrisma.user.findUnique).toBeCalledWith({where: {email: mockUser.email}});
+    expect(userService.validatePasswordHash).toBeCalledWith('plainTextPassword', mockUser.password);
+    expect(mockJwtAuthService.signToken).toBeCalledWith(mockUser);
+
+  });
+
+  it('should throw an error if token is invalid', async () => {
+
+    mockPrisma.user.findUnique.mockResolvedValue(mockUser);
+    (userService.validatePasswordHash as jest.Mock).mockResolvedValue(false);
+    mockJwtAuthService.signToken.mockResolvedValue('token');
+
+    await expect(userService.loginUser(mockUser.email, mockUser.password)).rejects.toThrow('Invalid password');
+
+  });
+
+  it('should throw an error if user is not found', async () => {
+
+    mockPrisma.user.findUnique.mockResolvedValue(null);
+    (userService.validatePasswordHash as jest.Mock).mockResolvedValue(true);
+    mockJwtAuthService.signToken.mockResolvedValue('token');
+
+    await expect(userService.loginUser(mockUser.email, mockUser.password)).rejects.toThrow('User not found');
+
+  });
+
+  it('should throw an error if user is not confirmed', async () => {
+      
+      mockPrisma.user.findUnique.mockResolvedValue(mockUser);
+      (userService.validatePasswordHash as jest.Mock).mockResolvedValue(true);
+      mockJwtAuthService.signToken.mockResolvedValue('token');
+  
+      await expect(userService.loginUser(mockUser.email, mockUser.password)).rejects.toThrow('Please confirm your email address before you can login.');
+  
+    });
 
 });

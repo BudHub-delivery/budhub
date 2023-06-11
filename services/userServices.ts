@@ -1,5 +1,7 @@
 import * as bcrypt from 'bcryptjs';
 import { PrismaClient, User, RoleType } from '@prisma/client';
+import jwtAuthServices from './jwtAuthServices';
+import MailerServices from './mailerServices';
 require('dotenv').config();
 
 export default class UserServices {
@@ -45,6 +47,13 @@ export default class UserServices {
     });
   }
 
+  async getUserByEmail(email: string): Promise<User | null> {
+    const prisma = new PrismaClient();
+    return await prisma.user.findUnique({
+      where: { email: email }
+    });
+  }
+  
   async hashPassword(plain_text_password: string){
     let saltRounds: number;
  
@@ -76,5 +85,137 @@ export default class UserServices {
     emailRegex = new RegExp(/.+@.+\..+/);
   
     return emailRegex.test(email);
+  }
+
+  async loginUser(email: string, password: string): Promise<any>{
+
+    const jwtAuthService = new jwtAuthServices();
+
+    const prisma = new PrismaClient();
+    const user = await prisma.user.findUnique({
+      where: { email: email }
+    });
+
+    if(!user){
+      throw new Error('Invalid email or password');
+    }
+
+    if(!user.emailConfirmed){
+      const token = await jwtAuthService.signToken(user);
+
+      const url = `${process.env.CLIENT_URL}/confirm-email?token=${token}`;
+      const userPayload = {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        url: url
+      }
+      
+      new MailerServices('userInvitation', userPayload).sendMail();
+
+      throw new Error('Please confirm your email address before you can login.');
+    }
+
+    const validPassword = await this.validatePasswordHash(password, user.password);
+
+    if(!validPassword){
+      throw new Error('Incorrect credentials');
+    }
+
+    if(!validPassword){
+      throw new Error('Invalid email or password');
+    }
+
+    const token = await jwtAuthService.signToken(user);
+
+    return user;
+  }
+  
+  // Send a password reset email
+  async forgotPassword(email: string): Promise<any>{
+
+    const user = await this.getUserByEmail(email);
+
+    if(!user){
+      // This is done to prevent user enumeration
+      throw new Error('Password email will be sent!');
+    }
+
+    const jwtAuthService = new jwtAuthServices();
+
+    // If user exists, create a token and send the password reset email
+    const token = await jwtAuthService.signToken(user);
+    const url = `${process.env.CLIENT_URL}/reset-password?token=${token}`;
+
+    const userPayload = {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      url: url
+    }
+
+    new MailerServices('passwordReset', userPayload).sendMail();
+
+    return user;
+    
+  }
+
+  // Validate the token and reset the password
+  async resetPassword(token: string, password: string): Promise<any>{
+    const jwtAuthService = new jwtAuthServices();
+    const prisma = new PrismaClient();
+
+    const validToken = await jwtAuthService.verifyToken(token);
+
+    if(!validToken){
+      throw new Error('Invalid token');
+    }
+
+    const { data }: any = await jwtAuthService.verifyToken(token);
+    const user = await prisma.user.findUnique({
+      where: { id: data.id }
+    });
+
+    if(!user){
+      throw new Error('There was an error resetting your passwordm please try again later.');
+    }
+
+    const hashedPassword = await this.hashPassword(password);
+
+    await prisma.user.update({
+      where: { id: data.id },
+      data: { password: hashedPassword }
+    });
+
+    return token;
+
+  }
+
+  async confirmEmail(token: string): Promise<any>{
+    const jwtAuthService = new jwtAuthServices();
+    const prisma = new PrismaClient();
+
+    const validToken = await jwtAuthService.verifyToken(token);
+
+    if(!validToken){
+      throw new Error('Invalid token');
+    }
+
+    const { data }: any = await jwtAuthService.verifyToken(token);
+    const user = await prisma.user.findUnique({
+      where: { id: data.id }
+    });
+
+    if(!user){
+      throw new Error('There was an error confirming your email, please try again later.');
+    }
+
+    await prisma.user.update({
+      where: { id: data.id },
+      data: { emailConfirmed: true }
+    });
+
+    return token;
+
   }
 }

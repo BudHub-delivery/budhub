@@ -15,4 +15,5 @@ model User {
   receivedMessages      Message[]             @relation("RecipientRelation")
   storeRoles            StoreRole[]
   deliveryDriver        DeliveryDriver?
+  emailConfirmed        Boolean               @default(false)
 }
