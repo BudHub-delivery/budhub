@@ -293,6 +293,16 @@ enum PaymentStatusType {
   REFUNDED
 }
 
+model RefreshToken {
+  id     Int      @id @default(autoincrement())
+  value  String
+  expiry DateTime
+
+  userId Int      @unique
+  user   User     @relation(fields: [userId], references: [id])
+}
+
+
 model Role {
   id            Int           @id @default(autoincrement())
   role          RoleType      @unique @default(USER)
@@ -360,6 +370,7 @@ model User {
   storeRoles            StoreRole[]
   deliveryDriver        DeliveryDriver?
   emailConfirmed        Boolean               @default(false)
+  refreshToken RefreshToken?
 }
 
 model UserRole {
