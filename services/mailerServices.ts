@@ -1,4 +1,4 @@
-import nodemailer from 'nodemailer';
+import nodemailer, { TransportOptions } from 'nodemailer';
 
 interface userPayload {
   firstName: string;
@@ -6,6 +6,10 @@ interface userPayload {
   email: string;
   url: string;
   storeName?: string | null;
+}
+
+interface CustomTransportOptions extends TransportOptions {
+  host: string;
 }
 
 export default class MailerService {
@@ -18,10 +22,8 @@ export default class MailerService {
     this.event = event;
     this.userPayload = userPayload;
     this.transporter = nodemailer.createTransport({
-      
       host: process.env.SMTP_HOST,
-      port: parseInt(process.env.SMTP_PORT as string, 10),
-      secure: process.env.SMTP_SECURE === 'true',
+      port: process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT, 10) : undefined,
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS
@@ -29,15 +31,30 @@ export default class MailerService {
     });
   }
 
+  // // Send mail with defined transport object
+  // async sendMail(): Promise<any> {
+  //   return await this.transporter.sendMail({
+  //     from: process.env.SMTP_SENDER,
+  //     to: this.userPayload.email,
+  //     subject: await this.getSubject(),
+  //     text: this.userPayload.url,
+  //     html: await this.messageTemplate()
+  //   });
+  // }
+
   // Send mail with defined transport object
   async sendMail(): Promise<any> {
-    return await this.transporter.sendMail({
-      from: `BudHub ${process.env.SMTP_USER}`,
-      to: this.userPayload.email,
-      subject: await this.getSubject(),
-      text: this.userPayload.url,
-      html: await this.messageTemplate()
-    });
+    try {
+      await this.transporter.sendMail({
+        from: process.env.SMTP_SENDER,
+        to: this.userPayload.email,
+        subject: await this.getSubject(),
+        text: this.userPayload.url,
+        html: await this.messageTemplate()
+      });
+    } catch (error: any) {
+      console.log(error);
+    }
   }
 
   // Get subject line for email
@@ -84,9 +101,7 @@ export default class MailerService {
         message = '';
         break;
     }
-
     return message;
-
   }
 
 

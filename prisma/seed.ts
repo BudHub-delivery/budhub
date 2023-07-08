@@ -240,7 +240,7 @@ class Seeder {
     }
 
   private async createUser () {
-    const userServices = new UserServices(this.prisma);
+    const userServices = new UserServices();
 
     // Create admin
     const admin = {
