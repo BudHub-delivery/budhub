@@ -29,11 +29,11 @@ export default class AddressServices {
   }
 
   /**
-   * Validates the address using Google Maps API and returns the validated address to the user.
-   * @param addressPayload The address payload to be validated.
-   * @returns The validated address payload.
-   * @throws Error if the address is invalid.
-   */
+  * Validates the address using Google Maps API and returns the validated address to the user.
+  * @param addressPayload The address payload to be validated.
+  * @returns The validated address payload.
+  * @throws Error if the address is invalid.
+  */
   async validateAddressViaGoogle(addressPayload: AddressPayload) {
     // https://developers.google.com/maps/documentation/geocoding/overview
     
@@ -73,11 +73,11 @@ export default class AddressServices {
   }
 
   /**
-   * Adds a delivery address to the database after it has been validated by the user.
-   * @param addressPayload The validated address payload.
-   * @returns The created address object.
-   * @throws Error if the UserId is missing when creating the address.
-   */
+  * Adds a delivery address to the database after it has been validated by the user.
+  * @param addressPayload The validated address payload.
+  * @returns The created address object.
+  * @throws Error if the UserId is missing when creating the address.
+  */
   async addDeliveryAddress(addressPayload: AddressPayload): Promise<Address> {
     // Do stuff with Google Maps API
     // https://developers.google.com/maps/documentation/geocoding/overview
@@ -106,9 +106,9 @@ export default class AddressServices {
   }
 
   /**
-   * Removes a delivery address from the database.
-   * @param addressId The ID of the address to be removed.
-   */
+  * Removes a delivery address from the database.
+  * @param addressId The ID of the address to be removed.
+  */
   async removeDeliveryAddress(addressId: number) {
     await this.prisma.address.delete({
       where: {
@@ -141,10 +141,25 @@ export default class AddressServices {
   }
 
   /**
-   * Builds an address object from the Google Maps API response.
-   * @param address_components The address components received from the Google Maps API.
-   * @returns The address object.
-   */
+  * Adds a delivery address to the database after it has been validated by the user.
+  * @param userId The ID of the user.
+  * @returns An array of address objects.
+  */
+  async getUserAddresses(userId: number) {
+    const addresses = await this.prisma.address.findMany({
+      where: {
+        userId: userId
+      }
+    });
+    
+    return addresses;
+  }
+
+  /**
+  * Builds an address object from the Google Maps API response.
+  * @param address_components The address components received from the Google Maps API.
+  * @returns The address object.
+  */
   async buildAddressFromGoogleResponse(address_components: AddressComponent[]) {
    
    const address: { [key: string]: string } = {};
