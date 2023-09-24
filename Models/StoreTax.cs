@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 namespace Budhub.Models;
 
-public class Store : BaseEntity
+public class StoreTax : BaseEntity
 {
     
     public double TaxRate { get; set; }

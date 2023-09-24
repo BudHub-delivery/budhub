@@ -16,9 +16,9 @@ public class Store : BaseEntity
     public int StoreTaxId { get; set; }
 
     //Navigation Properties
-    public Address Address { get; set; }
-    public Company? Company { get; set; }
-    public DeliveryPolygon? DeliveryPolygon { get; set; }
+    // public Address Address { get; set; }
+    // public Company? Company { get; set; }
+    // public DeliveryPolygon? DeliveryPolygon { get; set; }
     public List<StoreTax> StoreTaxes { get; set; }
 
 

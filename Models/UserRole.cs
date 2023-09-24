@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 namespace Budhub.Models;
 
-public class StoreRole : BaseEntity
+public class UserRole : BaseEntity
 {
     
     //Foreign Keys 

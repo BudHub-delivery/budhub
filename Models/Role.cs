@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 namespace Budhub.Models;
 
-public enum RolesTypes
+public enum RolesTypeEnum
 {
     ADMIN,
     USER,
@@ -14,7 +14,7 @@ public enum RolesTypes
 
 public class Role : BaseEntity
 {
-    public RolesTypes Role { get; set; }
+    public RolesTypeEnum RoleType { get; set; }
 
     //Associations
     public List<UserRole> UserRoles { get; set; }

@@ -1,6 +1,12 @@
-public class StrongPasswordAttributes : ValidationAttribute
+
+using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
+
+
+namespace Budhub.Attributes;
+public class StrongPasswordAttribute : ValidationAttribute
 {
-  protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+  protected override ValidationResult IsValid(object? value, ValidationContext validationContext)
   {
     var password = value as string;
     /*
@@ -12,12 +18,12 @@ public class StrongPasswordAttributes : ValidationAttribute
      */
     var passwordRegex = new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$");
 
-    if(!passwordRegex.IsMatch(password))
+    if(!passwordRegex.IsMatch(password!))
     {
       throw new StrongPasswordViolationException("Password must contain at least one lowercase letter, one uppercase letter, one digit, one special character, and be at least 8 characters in length.");
     }
 
-    return true;
+    return ValidationResult.Success!;
   }
 }
 
