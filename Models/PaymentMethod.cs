@@ -2,15 +2,14 @@
 using System.ComponentModel.DataAnnotations;
 namespace Budhub.Models;
 
-public class OrderItem
-{
-    public int ItemQuantity { get; set; }
 
+public class PaymentMethod : BaseEntity
+{
     //Foreign Keys
-    public int ItemId { get; set; }
     public int OrderId { get; set; }
+    public int BillingAddressId { get; set; }
 
     //Navigation Properties
     public Order Order { get; set; }
-    public Item Item { get; set; }
+    public Address BillingAddress { get; set; }
 }

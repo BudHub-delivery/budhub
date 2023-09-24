@@ -16,5 +16,5 @@ model User {
   storeRoles            StoreRole[]
   deliveryDriver        DeliveryDriver?
   emailConfirmed        Boolean               @default(false)
-  refreshToken RefreshToken?
+  refreshToken          RefreshToken?
 }
