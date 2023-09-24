@@ -13,7 +13,7 @@ public enum PaymentStatuses
 
 public class PaymentStatus : BaseEntity
 {
-    public PaymentStatuses PaymentStatus { get; set; }
+    public PaymentStatuses PaymentStatusType { get; set; }
 
     //Foreign Keys
     public int OrderId { get; set; }

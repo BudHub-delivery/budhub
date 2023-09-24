@@ -11,5 +11,5 @@ public class PaymentMethod : BaseEntity
 
     //Navigation Properties
     public Order Order { get; set; }
-    public Address BillingAddress { get; set; }
+    // public Address BillingAddress { get; set; }
 }

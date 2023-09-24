@@ -32,7 +32,7 @@ public class Order : BaseEntity
     //Navigation Properties
     public User User { get; set; }
     public Store Store { get; set; }
-    public Address Address { get; set; }
+    // public Address Address { get; set; }
     public OrderStatus OrderStatus { get; set; }
     public PaymentMethod PaymentMethod { get; set; }
     public PaymentStatus PaymentStatus { get; set; }

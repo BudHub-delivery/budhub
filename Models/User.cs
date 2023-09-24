@@ -1,6 +1,8 @@
 #pragma warning disable CS8618
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Budhub.Attributes;
+
 
 namespace Budhub.Models;
 public class User : BaseEntity
@@ -13,7 +15,7 @@ public class User : BaseEntity
 
     [Required]
     [EmailAddress]
-    [Index(IsUnique = true)]
+    //TODO: Add custom attribute to check if email is unique
     public string Email { get; set; }
 
     [Required]
@@ -29,9 +31,9 @@ public class User : BaseEntity
     //Foreign Keys and Navigation Properties
 
     //Associations
-    public List<Address> Addresses = new();
-    public List<BillingAddress> BillingAddresses = new();
-    public List<DeliveryAddress> DeliveryAddresses = new();
+    // public List<Address> Addresses = new();
+    // public List<BillingAddress> BillingAddresses = new();
+    // public List<DeliveryAddress> DeliveryAddresses = new();
     public List<Message> AuthorMessages = new();
     public List<Message> RecievedMessages = new();
     public List<MessageThread> MessageThreads = new();
@@ -40,6 +42,6 @@ public class User : BaseEntity
     public List<StoreRole> StoreRoles = new();
     public List<UserRole> UserRoles = new();
 
-    public DeliveryDriver? DeliveryDriver { get; set; }
+    // public DeliveryDriver? DeliveryDriver { get; set; }
     public RefreshToken? RefreshToken { get; set; }
 }
