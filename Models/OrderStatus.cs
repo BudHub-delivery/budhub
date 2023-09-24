@@ -2,15 +2,24 @@
 using System.ComponentModel.DataAnnotations;
 namespace Budhub.Models;
 
-public class OrderItem
+public enum OrderStatus
 {
-    public int ItemQuantity { get; set; }
+    PENDING
+    ACCEPTED
+    CANCELLED
+    OUT_FOR_DELIVERY
+    DELIVERED
+    READY_FOR_PICKUP
+    PICKED_UP
+}
+
+public class OrderStatus : BaseEntity
+{
+    public OrderStatus OrderStatus { get; set; }
 
     //Foreign Keys
-    public int ItemId { get; set; }
     public int OrderId { get; set; }
 
     //Navigation Properties
     public Order Order { get; set; }
-    public Item Item { get; set; }
 }
