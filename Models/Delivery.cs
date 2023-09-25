@@ -1,15 +1,3 @@
-// model Delivery {
-//   id                  Int               @id @default(autoincrement())
-//   orderId             Int               @unique
-//   order               Order             @relation(fields: [orderId], references: [id])
-//   deliveryDriverId    Int
-//   deliveryDriver      DeliveryDriver    @relation(fields: [deliveryDriverId], references: [id])
-//   deliveryMethodId    Int
-//   deliveryMethod      DeliveryMethod    @relation(fields: [deliveryMethodId], references: [id])
-//   deliveryStatusId    Int
-//   deliveryStatus      DeliveryStatus    @relation(fields: [deliveryStatusId], references: [id])
-// }
-
 #pragma warning disable 8618
 namespace Budhub.Models;
 public class Delivery : BaseEntity

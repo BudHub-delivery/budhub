@@ -1,13 +1,38 @@
 using Microsoft.AspNetCore.Mvc;
 using Budhub.Models;
 using Budhub.DataTransfer;
-namespace Budhub.Controllers;
+using MyApp.Utilities;
+using Budhub.Services;
 
+namespace Budhub.Controllers;
 [ApiController]
 [Route("api/auth")]
 public class AuthController : ControllerBase
 {
-    //This controller will be the only controller that does not require a JWT to access
-    //It is the entrypoint for registering, logging in (getting new tokens), and refreshing tokens.
-    //Eventually all other controllers will be Authorized, meaning a valid AccessToken will be required to fetch data.
+    private readonly IUserService _userService;
+
+    public AuthController(IUserService userService)
+    {
+        _userService = userService;
+    }
+
+    [HttpPost("register")]
+    async public Task<ActionResult<UserWithRoleDto>> RegisterUser(User user)
+    {
+        //Check the Modelstate of the incoming User, return errors if it fails.
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        //Use the _userService to create the user.
+        UserWithRoleDto? newUser = await _userService.CreateAsync(user);
+
+        if (newUser == null)
+        {
+            //error must be unknown, because the database should be able to save a validated user object.
+            return StatusCode(500, ResponseMessage.DatabaseSaveError);
+        }
+        return newUser;
+    }
 }

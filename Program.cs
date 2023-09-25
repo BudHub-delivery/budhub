@@ -1,8 +1,21 @@
+using Budhub.DataStorage;
+using Budhub.Services;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.AddJsonFile("appsettings.Secrets.json", optional: true, reloadOnChange: true);
+
+var connectionString = builder.Configuration["ConnectionStrings:LocalConnection"];
+
 builder.Services.AddControllers();
-//TODO: setup JWT auth config once we setup a token service.
-//TODO: Setup db connection.
+
+builder.Services.AddDbContext<DBContext>(options =>
+{
+	options.UseNpgsql(connectionString);
+});
+
+builder.Services.AddScoped<IUserService, UserService>();
 
 var app = builder.Build();
 

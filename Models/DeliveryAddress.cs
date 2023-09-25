@@ -1,8 +1,5 @@
-#pragma warning disable CS8618
-using System.ComponentModel.DataAnnotations;
-
 namespace Budhub.Models;
-public class BillingAddress : BaseEntity
+public class DeliveryAddress : BaseEntity
 {
     public int UserId { get; set; }
     public User? User { get; set; }

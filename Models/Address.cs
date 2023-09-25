@@ -17,17 +17,10 @@ public class Address : BaseEntity
     public double? Latitude { get; set; }
     public double? Longitude { get; set; }
 
-    //========= Associations ===========
     public int UserId { get; set; }
     public User? User { get; set; }
 
-    public int StoreId { get; set; }
-    // public Store? Store { get; set; }
-
-    public int CompanyId { get; set; }
-    // public Company? Company { get; set; }
-
     public List<BillingAddress> BillingAddresses { get; set; } = new();
-    // public List<DeliveryAddress> DeliveryAddresses { get; set; } = new();
+    public List<DeliveryAddress> DeliveryAddresses { get; set; } = new();
     public List<Order> Orders { get; set; } = new();
 }
