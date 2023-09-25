@@ -14,7 +14,8 @@ public enum RolesTypeEnum
 
 public class Role : BaseEntity
 {
-    public RolesTypeEnum RoleType { get; set; }
+    [Required]
+    public RolesTypeEnum RoleType { get; set; } = RolesTypeEnum.USER;
 
     //Associations
     public List<UserRole> UserRoles { get; set; }

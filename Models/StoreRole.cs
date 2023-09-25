@@ -1,5 +1,3 @@
-#pragma warning disable CS8618
-using System.ComponentModel.DataAnnotations;
 namespace Budhub.Models;
 
 public class StoreRole : BaseEntity
@@ -11,8 +9,8 @@ public class StoreRole : BaseEntity
     public int RoleId { get; set; }
 
     //Navigation Properties
-    public User User { get; set; }
-    public Store Store { get; set; }
-    public Role Role { get; set; }
+    public User? User { get; set; }
+    public Store? Store { get; set; }
+    public Role? Role { get; set; }
 
 }
