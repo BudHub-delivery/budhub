@@ -1,8 +1,6 @@
-#pragma warning disable CS8618
-using System.ComponentModel.DataAnnotations;
 namespace Budhub.Models;
 
-public enum PaymentStatuses
+public enum PaymentStatusEnum
 {
     PENDING,
     SUCCESSFUL,
@@ -13,11 +11,8 @@ public enum PaymentStatuses
 
 public class PaymentStatus : BaseEntity
 {
-    public PaymentStatuses PaymentStatusType { get; set; }
-
-    //Foreign Keys
-    public int OrderId { get; set; }
+    public PaymentStatusEnum PaymentStatusType { get; set; }
 
     //Navigation Properties
-    public List<Order> Orders { get; set; }
+    public List<Order> Orders { get; set; } = new();
 }

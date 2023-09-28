@@ -4,15 +4,15 @@ namespace Budhub.Models;
 
 public class StoreTax : BaseEntity
 {
-    
+    [Required]
     public double TaxRate { get; set; }
 
     //Foreign Keys and 
     public int StoreId { get; set; }
 
     //Navigation Properties
-    public Store Store { get; set; }
+    public Store? Store { get; set; }
 
     //Associations
-    List<Order> Orders { get; set; }
+    public List<Order> Orders { get; set; } = new();
 }

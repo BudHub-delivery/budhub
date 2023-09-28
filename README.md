@@ -25,8 +25,18 @@
   6. `cd budhub/`
   7. Install project dependencies with `dotnet restore`
   8. Run the dev build with `dotnet watch run`
-  9. Use Postman to GET `http://localhost:5000/api/users/test`
-  <!-- TODO: Include additional DB instructions when we incorporate DB connection-->
+  9. Drop the database in case it exists: `dotnet ef database drop`
+  10. Build the Database with `dotnet ef database update`
+  11. Use Postman POST Request to `http://localhost:5000/api/auth/register` with this test user:
+    ```
+    {
+        "firstName":"Bugs",
+        "lastName":"Bunny",
+        "email":"bugs@acme.com",
+        "password":"Password1!",
+        "confirm":"Password1!"
+    }
+    ```
   
   ## Usage
   This application is intended to be used to Order Cannabis from Dispencaries.

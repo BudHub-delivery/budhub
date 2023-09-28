@@ -24,22 +24,18 @@ public class Order : BaseEntity
     public int StoreId { get; set; }
     public int AddressId { get; set; }
     public int OrderStatusId { get; set; }
-    public int PaymentMethodId { get; set; }
     public int PaymentStatusId { get; set; }
     public int DeliveryDriverId { get; set; }
     public int StoreTaxId { get; set; }
 
     //Navigation Properties
-    public User User { get; set; }
-    public Store Store { get; set; }
-    // public Address Address { get; set; }
-    public OrderStatus OrderStatus { get; set; }
-    public PaymentMethod PaymentMethod { get; set; }
-    public PaymentStatus PaymentStatus { get; set; }
-    public User? DeliveryDriver { get; set; }
-    public StoreTax StoreTax { get; set; }
+    public User? User { get; set; }
+    public Store? Store { get; set; }
+    public Address? Address { get; set; }
+    public OrderStatus? OrderStatus { get; set; }
+    public PaymentStatus? PaymentStatus { get; set; }
+    public DeliveryDriver? DeliveryDriver { get; set; }
+    public StoreTax? StoreTax { get; set; }
 
-    public List<OrderItem> OrderItems { get; set; }
-    public List<OrderStatus> OrderStatuses { get; set; }
-    public List<MessageThread> MessageThreads { get; set; }
+    public List<OrderItem> OrderItems { get; set; } = new();
 }
