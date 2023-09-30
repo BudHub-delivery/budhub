@@ -6,10 +6,8 @@ public class Company : BaseEntity
     public string Name { get; set; }
     public string? Description { get; set; }
     
-    //Foreign Keys
-    public int AddressId { get; set; }
-    // Navigation Properties
+    //Navigation Properties
     public Address? Address { get; set; }
-    //Associations
+    //IEnumerables
     public List<Store> Stores { get; set; } = new();
 }

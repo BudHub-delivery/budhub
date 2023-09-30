@@ -6,4 +6,7 @@ public class DeliveryPolygon : BaseEntity
 {
     [Required]
     public string PolygonJson { get; set; }
+
+    public int StoreId { get; set; }
+    public Store? Store { get; set; }
 }

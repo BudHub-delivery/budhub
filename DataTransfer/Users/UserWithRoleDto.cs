@@ -1,4 +1,5 @@
 #pragma warning disable CS8618
+using Budhub.Enums;
 using Budhub.Models;
 
 namespace Budhub.DataTransfer.Users;
@@ -11,7 +12,7 @@ public class UserWithRoleDto
     public bool IsActive { get; set; }
     public DateTime CreatedAt {get; set;} = DateTime.UtcNow;
     public DateTime UpdatedAt{get; set;} = DateTime.UtcNow;
-    public RolesTypeEnum Role { get; set; }
+    public RoleType Role { get; set; }
 
     public UserWithRoleDto(User user, Role role)
     {

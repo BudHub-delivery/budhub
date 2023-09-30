@@ -1,11 +1,7 @@
 using System.ComponentModel.DataAnnotations;
+using Budhub.Enums;
 
 namespace Budhub.Models;
-public enum DeliveryMethodType
-{
-    PICKUP,
-    DELIVERY
-}
 
 public class DeliveryMethod : BaseEntity
 {

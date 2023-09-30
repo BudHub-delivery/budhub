@@ -41,6 +41,9 @@ namespace Budhub.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -59,14 +62,16 @@ namespace Budhub.Migrations
                     b.Property<double?>("Longitude")
                         .HasColumnType("double precision");
 
-                    b.Property<string>("State")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("State")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("StoreId")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("UserId")
+                    b.Property<int?>("UserId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Zip")
@@ -75,9 +80,57 @@ namespace Budhub.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CompanyId")
+                        .IsUnique();
+
+                    b.HasIndex("StoreId")
+                        .IsUnique();
+
                     b.HasIndex("UserId");
 
                     b.ToTable("Addresses");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = -1,
+                            AddressLine1 = "1234 Rabbit Lane",
+                            AddressLine2 = "First hole on the left",
+                            City = "Acme Acres",
+                            CompanyId = -1,
+                            CreatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4310),
+                            IsActive = true,
+                            State = 4,
+                            UpdatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4310),
+                            Zip = "91234"
+                        },
+                        new
+                        {
+                            Id = -2,
+                            AddressLine1 = "555 S Street Ave",
+                            AddressLine2 = "Suite 10",
+                            City = "Acme Acres",
+                            CreatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4330),
+                            IsActive = true,
+                            State = 4,
+                            StoreId = -1,
+                            UpdatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4330),
+                            Zip = "91234"
+                        },
+                        new
+                        {
+                            Id = -3,
+                            AddressLine1 = "5678 Side St",
+                            AddressLine2 = "Apt 200",
+                            City = "Denver",
+                            CreatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4330),
+                            DeliveryNotes = "Door Code: 5678",
+                            IsActive = true,
+                            State = 5,
+                            UpdatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4330),
+                            UserId = -2,
+                            Zip = "66666"
+                        });
                 });
 
             modelBuilder.Entity("Budhub.Models.BillingAddress", b =>
@@ -123,9 +176,6 @@ namespace Budhub.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AddressId")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -147,9 +197,18 @@ namespace Budhub.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AddressId");
-
                     b.ToTable("Companies");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = -1,
+                            CreatedAt = new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5010),
+                            Description = "Eh... what's up doc?",
+                            IsActive = true,
+                            Name = "Acme Herbal Delights",
+                            UpdatedAt = new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5010)
+                        });
                 });
 
             modelBuilder.Entity("Budhub.Models.Delivery", b =>
@@ -172,13 +231,13 @@ namespace Budhub.Migrations
                     b.Property<int?>("DeliveryMethodId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("DeliveryStatusId")
-                        .HasColumnType("integer");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
 
                     b.Property<int>("OrderId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Status")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -189,8 +248,6 @@ namespace Budhub.Migrations
                     b.HasIndex("DeliveryDriverId");
 
                     b.HasIndex("DeliveryMethodId");
-
-                    b.HasIndex("DeliveryStatusId");
 
                     b.HasIndex("OrderId");
 
@@ -261,6 +318,16 @@ namespace Budhub.Migrations
                         .IsUnique();
 
                     b.ToTable("DeliveryDriver");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = -1,
+                            CreatedAt = new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5090),
+                            IsActive = true,
+                            UpdatedAt = new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5090),
+                            UserId = -3
+                        });
                 });
 
             modelBuilder.Entity("Budhub.Models.DeliveryMethod", b =>
@@ -312,40 +379,18 @@ namespace Budhub.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("StoreId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("StoreId")
+                        .IsUnique();
 
                     b.ToTable("DeliveryPolygons");
-                });
-
-            modelBuilder.Entity("Budhub.Models.DeliveryStatus", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("DeliveryStatuses");
                 });
 
             modelBuilder.Entity("Budhub.Models.Item", b =>
@@ -386,13 +431,10 @@ namespace Budhub.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<double>("Price")
-                        .HasColumnType("double precision");
-
-                    b.Property<int?>("StoreId")
+                    b.Property<int>("StoreId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("StrainType")
+                    b.Property<int?>("Strain")
                         .HasColumnType("integer");
 
                     b.Property<double?>("ThcContent")
@@ -404,14 +446,181 @@ namespace Budhub.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<double>("Weight")
-                        .HasColumnType("double precision");
-
                     b.HasKey("Id");
 
                     b.HasIndex("StoreId");
 
                     b.ToTable("Items");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = -1,
+                            BrandName = "Some Name",
+                            ContainsCbd = false,
+                            ContainsThc = true,
+                            CreatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4400),
+                            IsActive = true,
+                            ItemDesc = "This is a description",
+                            ItemName = "Purple Haze",
+                            StoreId = -2,
+                            Strain = 1,
+                            Type = 1,
+                            UpdatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4400)
+                        },
+                        new
+                        {
+                            Id = -2,
+                            BrandName = "Some Name",
+                            ContainsCbd = false,
+                            ContainsThc = true,
+                            CreatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4430),
+                            IsActive = true,
+                            ItemDesc = "This is a description",
+                            ItemName = "Sour Diesel",
+                            StoreId = -2,
+                            Strain = 1,
+                            Type = 1,
+                            UpdatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4430)
+                        });
+                });
+
+            modelBuilder.Entity("Budhub.Models.ItemWeightPrice", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("integer");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("double precision");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Weight")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItemId");
+
+                    b.ToTable("ItemWeightPrice");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = -1,
+                            CreatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4680),
+                            IsActive = true,
+                            ItemId = -1,
+                            Price = 10.0,
+                            UpdatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4680),
+                            Weight = 1
+                        },
+                        new
+                        {
+                            Id = -2,
+                            CreatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4810),
+                            IsActive = true,
+                            ItemId = -1,
+                            Price = 35.0,
+                            UpdatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4810),
+                            Weight = 2
+                        },
+                        new
+                        {
+                            Id = -3,
+                            CreatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4810),
+                            IsActive = true,
+                            ItemId = -1,
+                            Price = 60.0,
+                            UpdatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4810),
+                            Weight = 3
+                        },
+                        new
+                        {
+                            Id = -4,
+                            CreatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4820),
+                            IsActive = true,
+                            ItemId = -1,
+                            Price = 100.0,
+                            UpdatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4820),
+                            Weight = 4
+                        },
+                        new
+                        {
+                            Id = -5,
+                            CreatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4820),
+                            IsActive = true,
+                            ItemId = -1,
+                            Price = 180.0,
+                            UpdatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4820),
+                            Weight = 5
+                        },
+                        new
+                        {
+                            Id = -6,
+                            CreatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4830),
+                            IsActive = true,
+                            ItemId = -2,
+                            Price = 10.0,
+                            UpdatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4830),
+                            Weight = 1
+                        },
+                        new
+                        {
+                            Id = -7,
+                            CreatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4830),
+                            IsActive = true,
+                            ItemId = -2,
+                            Price = 35.0,
+                            UpdatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4830),
+                            Weight = 2
+                        },
+                        new
+                        {
+                            Id = -8,
+                            CreatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4830),
+                            IsActive = true,
+                            ItemId = -2,
+                            Price = 60.0,
+                            UpdatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4830),
+                            Weight = 3
+                        },
+                        new
+                        {
+                            Id = -9,
+                            CreatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4840),
+                            IsActive = true,
+                            ItemId = -2,
+                            Price = 100.0,
+                            UpdatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4840),
+                            Weight = 4
+                        },
+                        new
+                        {
+                            Id = -10,
+                            CreatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4840),
+                            IsActive = true,
+                            ItemId = -2,
+                            Price = 180.0,
+                            UpdatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4840),
+                            Weight = 5
+                        });
                 });
 
             modelBuilder.Entity("Budhub.Models.Order", b =>
@@ -449,13 +658,13 @@ namespace Budhub.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
 
-                    b.Property<int>("OrderStatusId")
+                    b.Property<int>("OrderStatus")
                         .HasColumnType("integer");
 
                     b.Property<double>("OrderTotal")
                         .HasColumnType("double precision");
 
-                    b.Property<int>("PaymentStatusId")
+                    b.Property<int>("PaymentStatus")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("RequestedTime")
@@ -481,10 +690,6 @@ namespace Budhub.Migrations
 
                     b.HasIndex("DeliveryMethodId");
 
-                    b.HasIndex("OrderStatusId");
-
-                    b.HasIndex("PaymentStatusId");
-
                     b.HasIndex("StoreId");
 
                     b.HasIndex("StoreTaxId");
@@ -492,6 +697,27 @@ namespace Budhub.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Orders");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = -1,
+                            AddressId = -3,
+                            CreatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4370),
+                            DeliveryDriverId = -1,
+                            DeliveryFee = 4.9900000000000002,
+                            DeliveryTip = 0.0,
+                            FulfillmentMethod = 0,
+                            IsActive = true,
+                            OrderStatus = 0,
+                            OrderTotal = 0.0,
+                            PaymentStatus = 0,
+                            RequestedTime = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4380),
+                            StoreId = -2,
+                            StoreTaxId = -2,
+                            UpdatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4380),
+                            UserId = -2
+                        });
                 });
 
             modelBuilder.Entity("Budhub.Models.OrderItem", b =>
@@ -514,9 +740,6 @@ namespace Budhub.Migrations
                     b.Property<int>("ItemId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("ItemQuantity")
-                        .HasColumnType("integer");
-
                     b.Property<int>("OrderId")
                         .HasColumnType("integer");
 
@@ -530,34 +753,26 @@ namespace Budhub.Migrations
                     b.HasIndex("OrderId");
 
                     b.ToTable("OrderItems");
-                });
 
-            modelBuilder.Entity("Budhub.Models.OrderStatus", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
-
-                    b.Property<int>("OrderStatusState")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("OrderStatuses");
+                    b.HasData(
+                        new
+                        {
+                            Id = -1,
+                            CreatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4440),
+                            IsActive = true,
+                            ItemId = -1,
+                            OrderId = -1,
+                            UpdatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4440)
+                        },
+                        new
+                        {
+                            Id = -2,
+                            CreatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4440),
+                            IsActive = true,
+                            ItemId = -2,
+                            OrderId = -1,
+                            UpdatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4440)
+                        });
                 });
 
             modelBuilder.Entity("Budhub.Models.PaymentMethod", b =>
@@ -598,34 +813,6 @@ namespace Budhub.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("PaymentMethods");
-                });
-
-            modelBuilder.Entity("Budhub.Models.PaymentStatus", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
-
-                    b.Property<int>("PaymentStatusType")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("PaymentStatuses");
                 });
 
             modelBuilder.Entity("Budhub.Models.RefreshToken", b =>
@@ -691,6 +878,24 @@ namespace Budhub.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = -1,
+                            CreatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4340),
+                            IsActive = true,
+                            RoleType = 0,
+                            UpdatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4340)
+                        },
+                        new
+                        {
+                            Id = -2,
+                            CreatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4340),
+                            IsActive = true,
+                            RoleType = 4,
+                            UpdatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4340)
+                        });
                 });
 
             modelBuilder.Entity("Budhub.Models.Store", b =>
@@ -701,9 +906,6 @@ namespace Budhub.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AddressId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("CompanyId")
                         .HasColumnType("integer");
 
@@ -712,9 +914,6 @@ namespace Budhub.Migrations
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("DeliveryPolygonId")
-                        .HasColumnType("integer");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
@@ -731,21 +930,38 @@ namespace Budhub.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("StoreTaxId")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AddressId");
-
                     b.HasIndex("CompanyId");
 
-                    b.HasIndex("DeliveryPolygonId");
-
                     b.ToTable("Stores");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = -1,
+                            CompanyId = -1,
+                            CreatedAt = new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5020),
+                            IsActive = true,
+                            Name = "Smoke Shop",
+                            OperatingHours = "9:00 AM - 5:00 PM",
+                            PhoneNumber = "555-555-5555",
+                            UpdatedAt = new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5020)
+                        },
+                        new
+                        {
+                            Id = -2,
+                            CompanyId = -1,
+                            CreatedAt = new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5020),
+                            IsActive = true,
+                            Name = "Canni Shop",
+                            OperatingHours = "9:00 AM - 5:00 PM",
+                            PhoneNumber = "666-666-6666",
+                            UpdatedAt = new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5020)
+                        });
                 });
 
             modelBuilder.Entity("Budhub.Models.StoreRole", b =>
@@ -786,6 +1002,28 @@ namespace Budhub.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("StoreRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = -1,
+                            CreatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4350),
+                            IsActive = true,
+                            RoleId = -1,
+                            StoreId = -2,
+                            UpdatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4350),
+                            UserId = -1
+                        },
+                        new
+                        {
+                            Id = -2,
+                            CreatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4350),
+                            IsActive = true,
+                            RoleId = -2,
+                            StoreId = -2,
+                            UpdatedAt = new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4350),
+                            UserId = -4
+                        });
                 });
 
             modelBuilder.Entity("Budhub.Models.StoreTax", b =>
@@ -816,9 +1054,30 @@ namespace Budhub.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("StoreId");
+                    b.HasIndex("StoreId")
+                        .IsUnique();
 
                     b.ToTable("StoreTaxes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = -1,
+                            CreatedAt = new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5030),
+                            IsActive = true,
+                            StoreId = -1,
+                            TaxRate = 7.5,
+                            UpdatedAt = new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5030)
+                        },
+                        new
+                        {
+                            Id = -2,
+                            CreatedAt = new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5030),
+                            IsActive = true,
+                            StoreId = -2,
+                            TaxRate = 7.5,
+                            UpdatedAt = new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5030)
+                        });
                 });
 
             modelBuilder.Entity("Budhub.Models.User", b =>
@@ -863,6 +1122,68 @@ namespace Budhub.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = -1,
+                            CreatedAt = new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5060),
+                            Email = "admin@mail.com",
+                            EmailConfirmed = false,
+                            FirstName = "Admin",
+                            IsActive = true,
+                            LastName = "User",
+                            Password = "AQAAAAIAAYagAAAAELgIkJ1f3GPaNSIMSsTkKeBmHqdNcu+OP73B5yzt7YF81/0gpVJe4b8xwbnCcJRcXQ==",
+                            UpdatedAt = new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5060)
+                        },
+                        new
+                        {
+                            Id = -2,
+                            CreatedAt = new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5070),
+                            Email = "end@mail.com",
+                            EmailConfirmed = false,
+                            FirstName = "End",
+                            IsActive = true,
+                            LastName = "User",
+                            Password = "AQAAAAIAAYagAAAAEJ/EZ2zvGs+vvEobVdNy6ynHreRWBUAc9h5/gRCAWp8RX8nkYsROv2NPVAnzK3WLJA==",
+                            UpdatedAt = new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5070)
+                        },
+                        new
+                        {
+                            Id = -3,
+                            CreatedAt = new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5070),
+                            Email = "driver@mail.com",
+                            EmailConfirmed = false,
+                            FirstName = "Driver",
+                            IsActive = true,
+                            LastName = "User",
+                            Password = "AQAAAAIAAYagAAAAECYqcvNiBYfP6Fm1OuR5QLx5Z3ywobcWYlyWWA2QDN/0NoVWMr8MLLWcfDtYdWhfBQ==",
+                            UpdatedAt = new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5070)
+                        },
+                        new
+                        {
+                            Id = -4,
+                            CreatedAt = new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5080),
+                            Email = "store_emp@mail.com",
+                            EmailConfirmed = false,
+                            FirstName = "Store Employee",
+                            IsActive = true,
+                            LastName = "User",
+                            Password = "AQAAAAIAAYagAAAAEKqF/Ha74X7sT4Zby8zvMVZVy1nR483HSWOI4IcRAPUk8YaKS4S/FZ5h2eqKuTcXGw==",
+                            UpdatedAt = new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5080)
+                        },
+                        new
+                        {
+                            Id = -5,
+                            CreatedAt = new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5080),
+                            Email = "store_admin@mail.com",
+                            EmailConfirmed = false,
+                            FirstName = "Store Admin",
+                            IsActive = true,
+                            LastName = "User",
+                            Password = "AQAAAAIAAYagAAAAEIiMR6WUYGnOv2+bFDuU5iRZUISfHdpl49MoUPNKq6fKEINk2AbtRhOVymuyzIQolw==",
+                            UpdatedAt = new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5080)
+                        });
                 });
 
             modelBuilder.Entity("Budhub.Models.UserRole", b =>
@@ -902,11 +1223,21 @@ namespace Budhub.Migrations
 
             modelBuilder.Entity("Budhub.Models.Address", b =>
                 {
+                    b.HasOne("Budhub.Models.Company", "Company")
+                        .WithOne("Address")
+                        .HasForeignKey("Budhub.Models.Address", "CompanyId");
+
+                    b.HasOne("Budhub.Models.Store", "Store")
+                        .WithOne("Address")
+                        .HasForeignKey("Budhub.Models.Address", "StoreId");
+
                     b.HasOne("Budhub.Models.User", "User")
                         .WithMany("Addresses")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("Company");
+
+                    b.Navigation("Store");
 
                     b.Navigation("User");
                 });
@@ -930,17 +1261,6 @@ namespace Budhub.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Budhub.Models.Company", b =>
-                {
-                    b.HasOne("Budhub.Models.Address", "Address")
-                        .WithMany()
-                        .HasForeignKey("AddressId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Address");
-                });
-
             modelBuilder.Entity("Budhub.Models.Delivery", b =>
                 {
                     b.HasOne("Budhub.Models.DeliveryDriver", "DeliveryDriver")
@@ -953,12 +1273,6 @@ namespace Budhub.Migrations
                         .WithMany("Deliveries")
                         .HasForeignKey("DeliveryMethodId");
 
-                    b.HasOne("Budhub.Models.DeliveryStatus", "DeliveryStatus")
-                        .WithMany("Deliveries")
-                        .HasForeignKey("DeliveryStatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Budhub.Models.Order", "Order")
                         .WithMany()
                         .HasForeignKey("OrderId")
@@ -966,8 +1280,6 @@ namespace Budhub.Migrations
                         .IsRequired();
 
                     b.Navigation("DeliveryDriver");
-
-                    b.Navigation("DeliveryStatus");
 
                     b.Navigation("Order");
                 });
@@ -1002,11 +1314,37 @@ namespace Budhub.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Budhub.Models.DeliveryPolygon", b =>
+                {
+                    b.HasOne("Budhub.Models.Store", "Store")
+                        .WithOne("DeliveryPolygon")
+                        .HasForeignKey("Budhub.Models.DeliveryPolygon", "StoreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Store");
+                });
+
             modelBuilder.Entity("Budhub.Models.Item", b =>
                 {
-                    b.HasOne("Budhub.Models.Store", null)
+                    b.HasOne("Budhub.Models.Store", "Store")
                         .WithMany("Items")
-                        .HasForeignKey("StoreId");
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Store");
+                });
+
+            modelBuilder.Entity("Budhub.Models.ItemWeightPrice", b =>
+                {
+                    b.HasOne("Budhub.Models.Item", "Item")
+                        .WithMany("ItemWeightPrice")
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Item");
                 });
 
             modelBuilder.Entity("Budhub.Models.Order", b =>
@@ -1026,18 +1364,6 @@ namespace Budhub.Migrations
                     b.HasOne("Budhub.Models.DeliveryMethod", null)
                         .WithMany("Orders")
                         .HasForeignKey("DeliveryMethodId");
-
-                    b.HasOne("Budhub.Models.OrderStatus", "OrderStatus")
-                        .WithMany()
-                        .HasForeignKey("OrderStatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Budhub.Models.PaymentStatus", "PaymentStatus")
-                        .WithMany("Orders")
-                        .HasForeignKey("PaymentStatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
 
                     b.HasOne("Budhub.Models.Store", "Store")
                         .WithMany("Orders")
@@ -1060,10 +1386,6 @@ namespace Budhub.Migrations
                     b.Navigation("Address");
 
                     b.Navigation("DeliveryDriver");
-
-                    b.Navigation("OrderStatus");
-
-                    b.Navigation("PaymentStatus");
 
                     b.Navigation("Store");
 
@@ -1127,29 +1449,13 @@ namespace Budhub.Migrations
 
             modelBuilder.Entity("Budhub.Models.Store", b =>
                 {
-                    b.HasOne("Budhub.Models.Address", "Address")
-                        .WithMany()
-                        .HasForeignKey("AddressId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Budhub.Models.Company", "Company")
                         .WithMany("Stores")
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Budhub.Models.DeliveryPolygon", "DeliveryPolygon")
-                        .WithMany()
-                        .HasForeignKey("DeliveryPolygonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Address");
-
                     b.Navigation("Company");
-
-                    b.Navigation("DeliveryPolygon");
                 });
 
             modelBuilder.Entity("Budhub.Models.StoreRole", b =>
@@ -1182,8 +1488,8 @@ namespace Budhub.Migrations
             modelBuilder.Entity("Budhub.Models.StoreTax", b =>
                 {
                     b.HasOne("Budhub.Models.Store", "Store")
-                        .WithMany("StoreTaxes")
-                        .HasForeignKey("StoreId")
+                        .WithOne("StoreTax")
+                        .HasForeignKey("Budhub.Models.StoreTax", "StoreId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1220,6 +1526,8 @@ namespace Budhub.Migrations
 
             modelBuilder.Entity("Budhub.Models.Company", b =>
                 {
+                    b.Navigation("Address");
+
                     b.Navigation("Stores");
                 });
 
@@ -1237,24 +1545,16 @@ namespace Budhub.Migrations
                     b.Navigation("Orders");
                 });
 
-            modelBuilder.Entity("Budhub.Models.DeliveryStatus", b =>
-                {
-                    b.Navigation("Deliveries");
-                });
-
             modelBuilder.Entity("Budhub.Models.Item", b =>
                 {
+                    b.Navigation("ItemWeightPrice");
+
                     b.Navigation("OrderItems");
                 });
 
             modelBuilder.Entity("Budhub.Models.Order", b =>
                 {
                     b.Navigation("OrderItems");
-                });
-
-            modelBuilder.Entity("Budhub.Models.PaymentStatus", b =>
-                {
-                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("Budhub.Models.Role", b =>
@@ -1266,13 +1566,17 @@ namespace Budhub.Migrations
 
             modelBuilder.Entity("Budhub.Models.Store", b =>
                 {
+                    b.Navigation("Address");
+
+                    b.Navigation("DeliveryPolygon");
+
                     b.Navigation("Items");
 
                     b.Navigation("Orders");
 
                     b.Navigation("StoreRoles");
 
-                    b.Navigation("StoreTaxes");
+                    b.Navigation("StoreTax");
                 });
 
             modelBuilder.Entity("Budhub.Models.StoreTax", b =>

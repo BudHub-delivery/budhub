@@ -12,5 +12,4 @@ public class StoreRole : BaseEntity
     public User? User { get; set; }
     public Store? Store { get; set; }
     public Role? Role { get; set; }
-
 }
