@@ -4,14 +4,34 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Budhub.Migrations
 {
     /// <inheritdoc />
-    public partial class IntitMigration : Migration
+    public partial class InitMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Companies",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Companies", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "DeliveryMethods",
                 columns: table => new
@@ -27,74 +47,6 @@ namespace Budhub.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_DeliveryMethods", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "DeliveryPolygons",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    PolygonJson = table.Column<string>(type: "text", nullable: false),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DeliveryPolygons", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "DeliveryStatuses",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Status = table.Column<int>(type: "integer", nullable: false),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DeliveryStatuses", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "OrderStatuses",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    OrderStatusState = table.Column<int>(type: "integer", nullable: false),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_OrderStatuses", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PaymentStatuses",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    PaymentStatusType = table.Column<int>(type: "integer", nullable: false),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PaymentStatuses", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -136,20 +88,15 @@ namespace Budhub.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Addresses",
+                name: "Stores",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    AddressLine1 = table.Column<string>(type: "text", nullable: false),
-                    AddressLine2 = table.Column<string>(type: "text", nullable: true),
-                    DeliveryNotes = table.Column<string>(type: "text", nullable: true),
-                    City = table.Column<string>(type: "text", nullable: false),
-                    State = table.Column<string>(type: "text", nullable: false),
-                    Zip = table.Column<string>(type: "text", nullable: false),
-                    Latitude = table.Column<double>(type: "double precision", nullable: true),
-                    Longitude = table.Column<double>(type: "double precision", nullable: true),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    OperatingHours = table.Column<string>(type: "text", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "text", nullable: false),
+                    CompanyId = table.Column<int>(type: "integer", nullable: false),
                     IsActive = table.Column<bool>(type: "boolean", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -157,11 +104,11 @@ namespace Budhub.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Addresses", x => x.Id);
+                    table.PrimaryKey("PK_Stores", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Addresses_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
+                        name: "FK_Stores_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -245,13 +192,22 @@ namespace Budhub.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "BillingAddresses",
+                name: "Addresses",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
-                    AddressId = table.Column<int>(type: "integer", nullable: false),
+                    AddressLine1 = table.Column<string>(type: "text", nullable: false),
+                    AddressLine2 = table.Column<string>(type: "text", nullable: true),
+                    DeliveryNotes = table.Column<string>(type: "text", nullable: true),
+                    City = table.Column<string>(type: "text", nullable: false),
+                    State = table.Column<int>(type: "integer", nullable: false),
+                    Zip = table.Column<string>(type: "text", nullable: false),
+                    Latitude = table.Column<double>(type: "double precision", nullable: true),
+                    Longitude = table.Column<double>(type: "double precision", nullable: true),
+                    UserId = table.Column<int>(type: "integer", nullable: true),
+                    StoreId = table.Column<int>(type: "integer", nullable: true),
+                    CompanyId = table.Column<int>(type: "integer", nullable: true),
                     IsActive = table.Column<bool>(type: "boolean", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -259,113 +215,44 @@ namespace Budhub.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BillingAddresses", x => x.Id);
+                    table.PrimaryKey("PK_Addresses", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_BillingAddresses_Addresses_AddressId",
-                        column: x => x.AddressId,
-                        principalTable: "Addresses",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_BillingAddresses_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Companies",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    AddressId = table.Column<int>(type: "integer", nullable: false),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Companies", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Companies_Addresses_AddressId",
-                        column: x => x.AddressId,
-                        principalTable: "Addresses",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "DeliveryAddresses",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
-                    AddressId = table.Column<int>(type: "integer", nullable: false),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DeliveryAddresses", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_DeliveryAddresses_Addresses_AddressId",
-                        column: x => x.AddressId,
-                        principalTable: "Addresses",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_DeliveryAddresses_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Stores",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    OperatingHours = table.Column<string>(type: "text", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "text", nullable: false),
-                    AddressId = table.Column<int>(type: "integer", nullable: false),
-                    CompanyId = table.Column<int>(type: "integer", nullable: false),
-                    DeliveryPolygonId = table.Column<int>(type: "integer", nullable: false),
-                    StoreTaxId = table.Column<int>(type: "integer", nullable: false),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Stores", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Stores_Addresses_AddressId",
-                        column: x => x.AddressId,
-                        principalTable: "Addresses",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Stores_Companies_CompanyId",
+                        name: "FK_Addresses_Companies_CompanyId",
                         column: x => x.CompanyId,
                         principalTable: "Companies",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Stores_DeliveryPolygons_DeliveryPolygonId",
-                        column: x => x.DeliveryPolygonId,
-                        principalTable: "DeliveryPolygons",
+                        name: "FK_Addresses_Stores_StoreId",
+                        column: x => x.StoreId,
+                        principalTable: "Stores",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Addresses_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DeliveryPolygons",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    PolygonJson = table.Column<string>(type: "text", nullable: false),
+                    StoreId = table.Column<int>(type: "integer", nullable: false),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DeliveryPolygons", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DeliveryPolygons_Stores_StoreId",
+                        column: x => x.StoreId,
+                        principalTable: "Stores",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -383,11 +270,9 @@ namespace Budhub.Migrations
                     ContainsCbd = table.Column<bool>(type: "boolean", nullable: true),
                     CbdContent = table.Column<double>(type: "double precision", nullable: true),
                     ThcContent = table.Column<double>(type: "double precision", nullable: true),
-                    Weight = table.Column<double>(type: "double precision", nullable: false),
-                    Price = table.Column<double>(type: "double precision", nullable: false),
                     Type = table.Column<int>(type: "integer", nullable: true),
-                    StrainType = table.Column<int>(type: "integer", nullable: true),
-                    StoreId = table.Column<int>(type: "integer", nullable: true),
+                    Strain = table.Column<int>(type: "integer", nullable: true),
+                    StoreId = table.Column<int>(type: "integer", nullable: false),
                     IsActive = table.Column<bool>(type: "boolean", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -400,7 +285,8 @@ namespace Budhub.Migrations
                         name: "FK_Items_Stores_StoreId",
                         column: x => x.StoreId,
                         principalTable: "Stores",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -465,6 +351,91 @@ namespace Budhub.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "BillingAddresses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    AddressId = table.Column<int>(type: "integer", nullable: false),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BillingAddresses", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_BillingAddresses_Addresses_AddressId",
+                        column: x => x.AddressId,
+                        principalTable: "Addresses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_BillingAddresses_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DeliveryAddresses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    AddressId = table.Column<int>(type: "integer", nullable: false),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DeliveryAddresses", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DeliveryAddresses_Addresses_AddressId",
+                        column: x => x.AddressId,
+                        principalTable: "Addresses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DeliveryAddresses_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ItemWeightPrice",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ItemId = table.Column<int>(type: "integer", nullable: false),
+                    Weight = table.Column<int>(type: "integer", nullable: false),
+                    Price = table.Column<double>(type: "double precision", nullable: false),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ItemWeightPrice", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ItemWeightPrice_Items_ItemId",
+                        column: x => x.ItemId,
+                        principalTable: "Items",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Orders",
                 columns: table => new
                 {
@@ -474,12 +445,12 @@ namespace Budhub.Migrations
                     DeliveryTip = table.Column<double>(type: "double precision", nullable: false),
                     OrderTotal = table.Column<double>(type: "double precision", nullable: false),
                     FulfillmentMethod = table.Column<int>(type: "integer", nullable: false),
+                    OrderStatus = table.Column<int>(type: "integer", nullable: false),
+                    PaymentStatus = table.Column<int>(type: "integer", nullable: false),
                     RequestedTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UserId = table.Column<int>(type: "integer", nullable: false),
                     StoreId = table.Column<int>(type: "integer", nullable: false),
                     AddressId = table.Column<int>(type: "integer", nullable: false),
-                    OrderStatusId = table.Column<int>(type: "integer", nullable: false),
-                    PaymentStatusId = table.Column<int>(type: "integer", nullable: false),
                     DeliveryDriverId = table.Column<int>(type: "integer", nullable: false),
                     StoreTaxId = table.Column<int>(type: "integer", nullable: false),
                     DeliveryMethodId = table.Column<int>(type: "integer", nullable: true),
@@ -509,18 +480,6 @@ namespace Budhub.Migrations
                         principalTable: "DeliveryMethods",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Orders_OrderStatuses_OrderStatusId",
-                        column: x => x.OrderStatusId,
-                        principalTable: "OrderStatuses",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Orders_PaymentStatuses_PaymentStatusId",
-                        column: x => x.PaymentStatusId,
-                        principalTable: "PaymentStatuses",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
                         name: "FK_Orders_StoreTaxes_StoreTaxId",
                         column: x => x.StoreTaxId,
                         principalTable: "StoreTaxes",
@@ -546,9 +505,9 @@ namespace Budhub.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Status = table.Column<int>(type: "integer", nullable: false),
                     OrderId = table.Column<int>(type: "integer", nullable: false),
                     DeliveryDriverId = table.Column<int>(type: "integer", nullable: false),
-                    DeliveryStatusId = table.Column<int>(type: "integer", nullable: false),
                     DeliveryMethodId = table.Column<int>(type: "integer", nullable: true),
                     IsActive = table.Column<bool>(type: "boolean", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -570,12 +529,6 @@ namespace Budhub.Migrations
                         principalTable: "DeliveryMethods",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Deliveries_DeliveryStatuses_DeliveryStatusId",
-                        column: x => x.DeliveryStatusId,
-                        principalTable: "DeliveryStatuses",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
                         name: "FK_Deliveries_Orders_OrderId",
                         column: x => x.OrderId,
                         principalTable: "Orders",
@@ -589,7 +542,6 @@ namespace Budhub.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    ItemQuantity = table.Column<int>(type: "integer", nullable: false),
                     ItemId = table.Column<int>(type: "integer", nullable: false),
                     OrderId = table.Column<int>(type: "integer", nullable: false),
                     IsActive = table.Column<bool>(type: "boolean", nullable: false),
@@ -650,6 +602,130 @@ namespace Budhub.Migrations
                         principalColumn: "Id");
                 });
 
+            migrationBuilder.InsertData(
+                table: "Companies",
+                columns: new[] { "Id", "CreatedAt", "DeletedAt", "Description", "IsActive", "Name", "UpdatedAt" },
+                values: new object[] { -1, new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5010), null, "Eh... what's up doc?", true, "Acme Herbal Delights", new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5010) });
+
+            migrationBuilder.InsertData(
+                table: "Roles",
+                columns: new[] { "Id", "CreatedAt", "DeletedAt", "IsActive", "RoleType", "UpdatedAt" },
+                values: new object[,]
+                {
+                    { -2, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4340), null, true, 4, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4340) },
+                    { -1, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4340), null, true, 0, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4340) }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "CreatedAt", "DeletedAt", "Email", "EmailConfirmed", "FirstName", "IsActive", "LastName", "Password", "UpdatedAt" },
+                values: new object[,]
+                {
+                    { -5, new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5080), null, "store_admin@mail.com", false, "Store Admin", true, "User", "AQAAAAIAAYagAAAAEIiMR6WUYGnOv2+bFDuU5iRZUISfHdpl49MoUPNKq6fKEINk2AbtRhOVymuyzIQolw==", new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5080) },
+                    { -4, new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5080), null, "store_emp@mail.com", false, "Store Employee", true, "User", "AQAAAAIAAYagAAAAEKqF/Ha74X7sT4Zby8zvMVZVy1nR483HSWOI4IcRAPUk8YaKS4S/FZ5h2eqKuTcXGw==", new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5080) },
+                    { -3, new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5070), null, "driver@mail.com", false, "Driver", true, "User", "AQAAAAIAAYagAAAAECYqcvNiBYfP6Fm1OuR5QLx5Z3ywobcWYlyWWA2QDN/0NoVWMr8MLLWcfDtYdWhfBQ==", new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5070) },
+                    { -2, new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5070), null, "end@mail.com", false, "End", true, "User", "AQAAAAIAAYagAAAAEJ/EZ2zvGs+vvEobVdNy6ynHreRWBUAc9h5/gRCAWp8RX8nkYsROv2NPVAnzK3WLJA==", new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5070) },
+                    { -1, new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5060), null, "admin@mail.com", false, "Admin", true, "User", "AQAAAAIAAYagAAAAELgIkJ1f3GPaNSIMSsTkKeBmHqdNcu+OP73B5yzt7YF81/0gpVJe4b8xwbnCcJRcXQ==", new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5060) }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Addresses",
+                columns: new[] { "Id", "AddressLine1", "AddressLine2", "City", "CompanyId", "CreatedAt", "DeletedAt", "DeliveryNotes", "IsActive", "Latitude", "Longitude", "State", "StoreId", "UpdatedAt", "UserId", "Zip" },
+                values: new object[,]
+                {
+                    { -3, "5678 Side St", "Apt 200", "Denver", null, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4330), null, "Door Code: 5678", true, null, null, 5, null, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4330), -2, "66666" },
+                    { -1, "1234 Rabbit Lane", "First hole on the left", "Acme Acres", -1, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4310), null, null, true, null, null, 4, null, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4310), null, "91234" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "DeliveryDriver",
+                columns: new[] { "Id", "CreatedAt", "DeletedAt", "IsActive", "UpdatedAt", "UserId" },
+                values: new object[] { -1, new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5090), null, true, new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5090), -3 });
+
+            migrationBuilder.InsertData(
+                table: "Stores",
+                columns: new[] { "Id", "CompanyId", "CreatedAt", "DeletedAt", "IsActive", "Name", "OperatingHours", "PhoneNumber", "UpdatedAt" },
+                values: new object[,]
+                {
+                    { -2, -1, new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5020), null, true, "Canni Shop", "9:00 AM - 5:00 PM", "666-666-6666", new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5020) },
+                    { -1, -1, new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5020), null, true, "Smoke Shop", "9:00 AM - 5:00 PM", "555-555-5555", new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5020) }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Addresses",
+                columns: new[] { "Id", "AddressLine1", "AddressLine2", "City", "CompanyId", "CreatedAt", "DeletedAt", "DeliveryNotes", "IsActive", "Latitude", "Longitude", "State", "StoreId", "UpdatedAt", "UserId", "Zip" },
+                values: new object[] { -2, "555 S Street Ave", "Suite 10", "Acme Acres", null, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4330), null, null, true, null, null, 4, -1, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4330), null, "91234" });
+
+            migrationBuilder.InsertData(
+                table: "Items",
+                columns: new[] { "Id", "BrandName", "CbdContent", "ContainsCbd", "ContainsThc", "CreatedAt", "DeletedAt", "IsActive", "ItemDesc", "ItemName", "StoreId", "Strain", "ThcContent", "Type", "UpdatedAt" },
+                values: new object[,]
+                {
+                    { -2, "Some Name", null, false, true, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4430), null, true, "This is a description", "Sour Diesel", -2, 1, null, 1, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4430) },
+                    { -1, "Some Name", null, false, true, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4400), null, true, "This is a description", "Purple Haze", -2, 1, null, 1, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4400) }
+                });
+
+            migrationBuilder.InsertData(
+                table: "StoreRoles",
+                columns: new[] { "Id", "CreatedAt", "DeletedAt", "IsActive", "RoleId", "StoreId", "UpdatedAt", "UserId" },
+                values: new object[,]
+                {
+                    { -2, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4350), null, true, -2, -2, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4350), -4 },
+                    { -1, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4350), null, true, -1, -2, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4350), -1 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "StoreTaxes",
+                columns: new[] { "Id", "CreatedAt", "DeletedAt", "IsActive", "StoreId", "TaxRate", "UpdatedAt" },
+                values: new object[,]
+                {
+                    { -2, new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5030), null, true, -2, 7.5, new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5030) },
+                    { -1, new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5030), null, true, -1, 7.5, new DateTime(2023, 9, 30, 3, 46, 39, 361, DateTimeKind.Utc).AddTicks(5030) }
+                });
+
+            migrationBuilder.InsertData(
+                table: "ItemWeightPrice",
+                columns: new[] { "Id", "CreatedAt", "DeletedAt", "IsActive", "ItemId", "Price", "UpdatedAt", "Weight" },
+                values: new object[,]
+                {
+                    { -10, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4840), null, true, -2, 180.0, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4840), 5 },
+                    { -9, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4840), null, true, -2, 100.0, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4840), 4 },
+                    { -8, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4830), null, true, -2, 60.0, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4830), 3 },
+                    { -7, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4830), null, true, -2, 35.0, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4830), 2 },
+                    { -6, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4830), null, true, -2, 10.0, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4830), 1 },
+                    { -5, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4820), null, true, -1, 180.0, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4820), 5 },
+                    { -4, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4820), null, true, -1, 100.0, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4820), 4 },
+                    { -3, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4810), null, true, -1, 60.0, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4810), 3 },
+                    { -2, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4810), null, true, -1, 35.0, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4810), 2 },
+                    { -1, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4680), null, true, -1, 10.0, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4680), 1 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Orders",
+                columns: new[] { "Id", "AddressId", "CreatedAt", "DeletedAt", "DeliveryDriverId", "DeliveryFee", "DeliveryMethodId", "DeliveryTip", "FulfillmentMethod", "IsActive", "OrderStatus", "OrderTotal", "PaymentStatus", "RequestedTime", "StoreId", "StoreTaxId", "UpdatedAt", "UserId" },
+                values: new object[] { -1, -3, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4370), null, -1, 4.9900000000000002, null, 0.0, 0, true, 0, 0.0, 0, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4380), -2, -2, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4380), -2 });
+
+            migrationBuilder.InsertData(
+                table: "OrderItems",
+                columns: new[] { "Id", "CreatedAt", "DeletedAt", "IsActive", "ItemId", "OrderId", "UpdatedAt" },
+                values: new object[,]
+                {
+                    { -2, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4440), null, true, -2, -1, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4440) },
+                    { -1, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4440), null, true, -1, -1, new DateTime(2023, 9, 30, 3, 46, 40, 78, DateTimeKind.Utc).AddTicks(4440) }
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Addresses_CompanyId",
+                table: "Addresses",
+                column: "CompanyId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Addresses_StoreId",
+                table: "Addresses",
+                column: "StoreId",
+                unique: true);
+
             migrationBuilder.CreateIndex(
                 name: "IX_Addresses_UserId",
                 table: "Addresses",
@@ -666,11 +742,6 @@ namespace Budhub.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Companies_AddressId",
-                table: "Companies",
-                column: "AddressId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Deliveries_DeliveryDriverId",
                 table: "Deliveries",
                 column: "DeliveryDriverId");
@@ -679,11 +750,6 @@ namespace Budhub.Migrations
                 name: "IX_Deliveries_DeliveryMethodId",
                 table: "Deliveries",
                 column: "DeliveryMethodId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Deliveries_DeliveryStatusId",
-                table: "Deliveries",
-                column: "DeliveryStatusId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Deliveries_OrderId",
@@ -707,9 +773,20 @@ namespace Budhub.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_DeliveryPolygons_StoreId",
+                table: "DeliveryPolygons",
+                column: "StoreId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Items_StoreId",
                 table: "Items",
                 column: "StoreId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ItemWeightPrice_ItemId",
+                table: "ItemWeightPrice",
+                column: "ItemId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrderItems_ItemId",
@@ -735,16 +812,6 @@ namespace Budhub.Migrations
                 name: "IX_Orders_DeliveryMethodId",
                 table: "Orders",
                 column: "DeliveryMethodId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Orders_OrderStatusId",
-                table: "Orders",
-                column: "OrderStatusId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Orders_PaymentStatusId",
-                table: "Orders",
-                column: "PaymentStatusId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_StoreId",
@@ -797,24 +864,15 @@ namespace Budhub.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Stores_AddressId",
-                table: "Stores",
-                column: "AddressId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Stores_CompanyId",
                 table: "Stores",
                 column: "CompanyId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Stores_DeliveryPolygonId",
-                table: "Stores",
-                column: "DeliveryPolygonId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_StoreTaxes_StoreId",
                 table: "StoreTaxes",
-                column: "StoreId");
+                column: "StoreId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserRoles_RoleId",
@@ -837,6 +895,12 @@ namespace Budhub.Migrations
                 name: "DeliveryAddresses");
 
             migrationBuilder.DropTable(
+                name: "DeliveryPolygons");
+
+            migrationBuilder.DropTable(
+                name: "ItemWeightPrice");
+
+            migrationBuilder.DropTable(
                 name: "OrderItems");
 
             migrationBuilder.DropTable(
@@ -852,9 +916,6 @@ namespace Budhub.Migrations
                 name: "UserRoles");
 
             migrationBuilder.DropTable(
-                name: "DeliveryStatuses");
-
-            migrationBuilder.DropTable(
                 name: "Items");
 
             migrationBuilder.DropTable(
@@ -867,34 +928,25 @@ namespace Budhub.Migrations
                 name: "Roles");
 
             migrationBuilder.DropTable(
+                name: "Addresses");
+
+            migrationBuilder.DropTable(
                 name: "DeliveryDriver");
 
             migrationBuilder.DropTable(
                 name: "DeliveryMethods");
 
             migrationBuilder.DropTable(
-                name: "OrderStatuses");
-
-            migrationBuilder.DropTable(
-                name: "PaymentStatuses");
-
-            migrationBuilder.DropTable(
                 name: "StoreTaxes");
+
+            migrationBuilder.DropTable(
+                name: "Users");
 
             migrationBuilder.DropTable(
                 name: "Stores");
 
             migrationBuilder.DropTable(
                 name: "Companies");
-
-            migrationBuilder.DropTable(
-                name: "DeliveryPolygons");
-
-            migrationBuilder.DropTable(
-                name: "Addresses");
-
-            migrationBuilder.DropTable(
-                name: "Users");
         }
     }
 }
