@@ -31,13 +31,9 @@ public class TokenService : ITokenService
         try
         {
             string jwt = GenerateAccessToken(userId);
-            Console.WriteLine(jwt);
             await DeactivateRefreshTokensForUserAsync(userId);
-            Console.WriteLine("WE DEACTIVATED!");
             await _context.RefreshTokens.AddAsync(rft);
-            Console.WriteLine("Added async");
             await _context.SaveChangesAsync();
-            Console.WriteLine("Saved Changes");
             return new TokensDto(rft, jwt);
         }
         catch (InvalidOperationException ex)
@@ -89,7 +85,6 @@ public class TokenService : ITokenService
         {
             throw new InvalidOperationException("Jwt Secret is Invalid or Missing.");
         }
-        Console.WriteLine($"user id is {userId}");
         byte[] key = Encoding.ASCII.GetBytes(encKey);
 
         JwtSecurityTokenHandler handler = new();
@@ -105,9 +100,7 @@ public class TokenService : ITokenService
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
             SecurityAlgorithms.HmacSha256Signature)
         };
-        Console.WriteLine(tokenDescriptor);
         SecurityToken token = handler.CreateToken(tokenDescriptor);
-        Console.WriteLine(token);
         return handler.WriteToken(token);
     }
 
@@ -116,8 +109,6 @@ public class TokenService : ITokenService
         using var rng = RandomNumberGenerator.Create();
         byte[] byteToken = new byte[32]; //128 bit
         rng.GetBytes(byteToken);
-        Console.WriteLine("GENERATED REFRESH TOKEN");
-        Console.WriteLine(rng);
         return Convert.ToBase64String(byteToken);
     }
 }

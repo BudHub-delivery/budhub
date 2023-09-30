@@ -23,12 +23,18 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 
 string? encKey = builder.Configuration["Jwt:SecretKey"];
 
-if (string.IsNullOrEmpty(encKey) || encKey.Length < 16)
+if (string.IsNullOrEmpty(encKey))
 {
     throw new InvalidOperationException("Jwt Secret is Invalid or Missing.");
 }
 
 byte[] key = Encoding.ASCII.GetBytes(encKey);
+
+// Check for a minimum of 256 bits
+if (key.Length * 8 < 256)
+{
+    throw new InvalidOperationException("Jwt Secret is not of sufficient bit length.");
+}
 
 builder.Services.AddAuthentication(options =>
 {
