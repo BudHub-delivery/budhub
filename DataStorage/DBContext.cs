@@ -12,13 +12,10 @@ public class DBContext : DbContext
     public DbSet<DeliveryAddress> DeliveryAddresses { get; set; }
     public DbSet<DeliveryMethod> DeliveryMethods { get; set; }
     public DbSet<DeliveryPolygon> DeliveryPolygons { get; set; }
-    public DbSet<DeliveryStatus> DeliveryStatuses { get; set; }
     public DbSet<Item> Items { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
-    public DbSet<OrderStatus> OrderStatuses { get; set; }
     public DbSet<PaymentMethod> PaymentMethods { get; set; }
-    public DbSet<PaymentStatus> PaymentStatuses { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }
     public DbSet<Role> Roles { get; set; }
     public DbSet<Store> Stores { get; set; }
@@ -28,4 +25,9 @@ public class DBContext : DbContext
     public DbSet<UserRole> UserRoles { get; set; }
 
     public DBContext(DbContextOptions options) : base(options) { }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Seed();
+    }
 }
