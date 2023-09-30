@@ -1,22 +1,15 @@
-using System.ComponentModel.DataAnnotations;
+// using System.ComponentModel.DataAnnotations;
+// using Budhub.Enums;
 
-namespace Budhub.Models;
+// namespace Budhub.Models;
 
-public enum DeliveryStatusEnum 
-{
-  DELIVERED,
-  IN_TRANSIT,
-  PENDING,
-  CANCELLED,
-  PICKED_UP,
-  READY_FOR_PICKUP
-}
+// public class DeliveryStatus : BaseEntity
+// {
+//     [Required]
+//     public DeliveryStatusType Status { get; set; }
 
-public class DeliveryStatus : BaseEntity
-{
-    [Required]
-    public DeliveryStatusEnum Status { get; set; }
+//     //Associations
+//     public List<Delivery> Deliveries { get; set; } = new();
+// }
 
-    //Associations
-    public List<Delivery> Deliveries { get; set; } = new();
-}
+//TODO:I propose we get rid of this class and just have a DeliveryStatus enum on the delivery object.

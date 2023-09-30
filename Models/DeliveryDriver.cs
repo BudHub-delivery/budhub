@@ -1,5 +1,5 @@
 namespace Budhub.Models;
-public class DeliveryDriver :BaseEntity
+public class DeliveryDriver : BaseEntity
 {
     public int UserId { get; set; }
     public User? User { get; set; }

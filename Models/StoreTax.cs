@@ -7,12 +7,10 @@ public class StoreTax : BaseEntity
     [Required]
     public double TaxRate { get; set; }
 
-    //Foreign Keys and 
+    //Foreign Keys
     public int StoreId { get; set; }
 
     //Navigation Properties
     public Store? Store { get; set; }
-
-    //Associations
     public List<Order> Orders { get; set; } = new();
 }

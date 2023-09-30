@@ -1,29 +1,8 @@
 #pragma warning disable CS8618
 using System.ComponentModel.DataAnnotations;
+using Budhub.Enums;
 namespace Budhub.Models;
 
-public enum ItemTypeEnum
-{
-    PACKAGED_FLOWER,
-    BULK_FLOWER,
-    EDIBLE,
-    CONCENTRATE,
-    CATRIDGE,
-    VAPORIZER,
-    TOPICAL,
-    PREROLL,
-    ACCESSORY,
-    OTHER
-}
-
-public enum StrainTypeEnum
-{
-    INDICA,
-    SATIVA,
-    HYBRID,
-    CBD,
-    OTHER
-}
 
 public class Item : BaseEntity
 {
@@ -38,13 +17,14 @@ public class Item : BaseEntity
     public bool? ContainsCbd { get; set; }
     public double? CbdContent { get; set; }
     public double? ThcContent { get; set; }
-    [Required]
-    public double Weight { get; set; }
-    [Required]
-    public double Price { get; set; }
-    public ItemTypeEnum? Type { get; set; }
-    public StrainTypeEnum? StrainType { get; set; }
+    public ItemType? Type { get; set; }
+    public Strain? Strain { get; set; }
 
-    //Associations
+    //Foreign keys
+    public int StoreId {get;set;}
+    
+    //Navigation properties
+    public Store? Store {get;set;}
+    public List<ItemWeightPrice> ItemWeightPrice {get;set;} = new();
     public List<OrderItem> OrderItems { get; set; } = new();
 }
