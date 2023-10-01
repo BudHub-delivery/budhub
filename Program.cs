@@ -19,6 +19,7 @@ builder.Services.AddDbContext<DBContext>(options =>
 });
 
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAddressService, AddressService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 
 string? encKey = builder.Configuration["Jwt:SecretKey"];
